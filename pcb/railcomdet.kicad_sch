@@ -477,7 +477,7 @@
   (symbol (lib_id "Connector:Screw_Terminal_01x04") (at 269.875 23.495 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 81ee7ac0-27a1-48ae-8e2b-77d039a66b46)
-    (property "Reference" "J?" (at 271.907 23.9303 0)
+    (property "Reference" "J1" (at 271.907 23.9303 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Screw_Terminal_01x04" (at 271.907 26.4672 0)
@@ -496,7 +496,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
-          (reference "J?") (unit 1)
+          (reference "J1") (unit 1)
         )
       )
     )
@@ -505,7 +505,7 @@
   (symbol (lib_id "Isolator:6N137") (at 144.145 109.22 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid bf1a135e-6799-4917-b651-828827221ce3)
-    (property "Reference" "U?" (at 144.145 97.9002 0)
+    (property "Reference" "U2" (at 144.145 97.9002 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6N137" (at 144.145 100.4371 0)
@@ -527,7 +527,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
-          (reference "U?") (unit 1)
+          (reference "U2") (unit 1)
         )
       )
     )
@@ -536,7 +536,7 @@
   (symbol (lib_id "Isolator:6N137") (at 144.145 60.96 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f203405c-1e60-4ccc-99e6-f07eb47d6cea)
-    (property "Reference" "U?" (at 144.145 49.6402 0)
+    (property "Reference" "U1" (at 144.145 49.6402 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6N137" (at 144.145 52.1771 0)
@@ -558,7 +558,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
-          (reference "U?") (unit 1)
+          (reference "U1") (unit 1)
         )
       )
     )

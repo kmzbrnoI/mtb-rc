@@ -801,7 +801,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 118.11 0) (unit 4)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 045e3251-855a-48cc-96cf-db78767ad74e)
-    (property "Reference" "U?" (at 149.86 109.22 0)
+    (property "Reference" "U6" (at 149.86 109.22 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 111.76 0)
@@ -830,7 +830,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 4)
+          (reference "U6") (unit 4)
         )
       )
     )
@@ -839,7 +839,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 114.3 0) (unit 2)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 04dba232-c476-44b0-8269-c6ab21bde58c)
-    (property "Reference" "U?" (at 116.84 105.41 0)
+    (property "Reference" "U4" (at 116.84 105.41 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 107.95 0)
@@ -868,7 +868,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 2)
+          (reference "U4") (unit 2)
         )
       )
     )
@@ -877,7 +877,7 @@
   (symbol (lib_id "Comparator:LM339") (at 140.97 26.67 0) (unit 5)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 07a7a746-ad8f-41d3-8b67-8680fa150bc7)
-    (property "Reference" "U?" (at 139.7 26.035 0)
+    (property "Reference" "U5" (at 139.7 26.035 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "LM339" (at 139.7 28.575 0)
@@ -906,7 +906,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 5)
+          (reference "U5") (unit 5)
         )
       )
     )
@@ -915,7 +915,7 @@
   (symbol (lib_id "Comparator:LM339") (at 81.28 22.86 0) (unit 5)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 1ee0ed99-7f4d-4790-9302-48d7f08791ce)
-    (property "Reference" "U?" (at 80.01 22.225 0)
+    (property "Reference" "U3" (at 80.01 22.225 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "LM339" (at 80.01 24.765 0)
@@ -944,7 +944,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 5)
+          (reference "U3") (unit 5)
         )
       )
     )
@@ -953,7 +953,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 26.67 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 29d23410-c888-43c9-8669-b9fc2867c0c0)
-    (property "Reference" "U?" (at 149.86 17.78 0)
+    (property "Reference" "U5" (at 149.86 17.78 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 20.32 0)
@@ -982,7 +982,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 1)
+          (reference "U5") (unit 1)
         )
       )
     )
@@ -991,7 +991,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 38.1 0) (unit 2)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 37f5b4b1-b3a4-4671-9db0-66a8d682aa11)
-    (property "Reference" "U?" (at 149.86 29.21 0)
+    (property "Reference" "U5" (at 149.86 29.21 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 31.75 0)
@@ -1020,7 +1020,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 2)
+          (reference "U5") (unit 2)
         )
       )
     )
@@ -1029,7 +1029,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 102.87 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 510cb04d-d819-43f9-b033-22c0090f4e53)
-    (property "Reference" "U?" (at 116.84 93.98 0)
+    (property "Reference" "U4" (at 116.84 93.98 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 96.52 0)
@@ -1058,7 +1058,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 1)
+          (reference "U4") (unit 1)
         )
       )
     )
@@ -1067,7 +1067,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 81.28 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 596d3bdb-4455-4765-b520-c98a179c9b3a)
-    (property "Reference" "U?" (at 149.86 72.39 0)
+    (property "Reference" "U6" (at 149.86 72.39 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 74.93 0)
@@ -1096,7 +1096,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 1)
+          (reference "U6") (unit 1)
         )
       )
     )
@@ -1105,7 +1105,7 @@
   (symbol (lib_id "Comparator:LM339") (at 90.17 22.86 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 68f661f1-f2dd-4273-8ae9-1df398e3b08c)
-    (property "Reference" "U?" (at 90.17 13.97 0)
+    (property "Reference" "U3" (at 90.17 13.97 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 90.17 16.51 0)
@@ -1134,7 +1134,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 1)
+          (reference "U3") (unit 1)
         )
       )
     )
@@ -1143,7 +1143,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 139.7 0) (unit 4)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6f7dea13-1a19-4561-a89f-9f539485fb88)
-    (property "Reference" "U?" (at 116.84 130.81 0)
+    (property "Reference" "U4" (at 116.84 130.81 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 133.35 0)
@@ -1172,7 +1172,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 4)
+          (reference "U4") (unit 4)
         )
       )
     )
@@ -1181,7 +1181,7 @@
   (symbol (lib_id "Comparator:LM339") (at 107.95 102.87 0) (unit 5)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 79fb0ac3-f38c-40de-b859-e63b65ec3c21)
-    (property "Reference" "U?" (at 106.68 102.235 0)
+    (property "Reference" "U4" (at 106.68 102.235 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "LM339" (at 106.68 104.775 0)
@@ -1210,7 +1210,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 5)
+          (reference "U4") (unit 5)
         )
       )
     )
@@ -1219,7 +1219,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 105.41 0) (unit 3)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8aad17cc-ea44-4838-ba4b-69f947486329)
-    (property "Reference" "U?" (at 149.86 96.52 0)
+    (property "Reference" "U6" (at 149.86 96.52 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 99.06 0)
@@ -1248,7 +1248,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 3)
+          (reference "U6") (unit 3)
         )
       )
     )
@@ -1257,7 +1257,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 50.8 0) (unit 3)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8ae91e09-80ef-454b-85fd-ac6024f98b9d)
-    (property "Reference" "U?" (at 149.86 41.91 0)
+    (property "Reference" "U5" (at 149.86 41.91 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 44.45 0)
@@ -1286,7 +1286,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 3)
+          (reference "U5") (unit 3)
         )
       )
     )
@@ -1295,7 +1295,7 @@
   (symbol (lib_id "Connector:Screw_Terminal_01x08") (at 36.83 71.12 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 938d86c9-adf0-4f30-b3f2-47550cb7d5e7)
-    (property "Reference" "J?" (at 34.29 71.755 0)
+    (property "Reference" "J3" (at 34.29 71.755 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Screw_Terminal_01x08" (at 34.29 74.295 0)
@@ -1318,7 +1318,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "J?") (unit 1)
+          (reference "J3") (unit 1)
         )
       )
     )
@@ -1327,7 +1327,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 72.39 0) (unit 3)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 9c5a5222-5170-4599-a25a-d22a4a00efe7)
-    (property "Reference" "U?" (at 116.84 63.5 0)
+    (property "Reference" "U3" (at 116.84 63.5 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 66.04 0)
@@ -1356,7 +1356,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 3)
+          (reference "U3") (unit 3)
         )
       )
     )
@@ -1365,7 +1365,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 63.5 0) (unit 4)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b3ec0b10-9463-4886-bfa1-c8579efbad31)
-    (property "Reference" "U?" (at 149.86 54.61 0)
+    (property "Reference" "U5" (at 149.86 54.61 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 57.15 0)
@@ -1394,7 +1394,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 4)
+          (reference "U5") (unit 4)
         )
       )
     )
@@ -1403,7 +1403,7 @@
   (symbol (lib_id "Isolator:6N137") (at 204.47 80.01 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b4ece052-7769-48aa-bfd6-750f24808b7c)
-    (property "Reference" "U?" (at 204.47 68.58 0)
+    (property "Reference" "U7" (at 204.47 68.58 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6N137" (at 204.47 71.12 0)
@@ -1425,7 +1425,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 1)
+          (reference "U7") (unit 1)
         )
       )
     )
@@ -1434,7 +1434,7 @@
   (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 36.83 43.18 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid ba9a0849-d936-44ea-8b90-c9a36a7041f2)
-    (property "Reference" "J?" (at 34.29 43.815 0)
+    (property "Reference" "J2" (at 34.29 43.815 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Screw_Terminal_01x02" (at 34.29 46.355 0)
@@ -1451,7 +1451,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "J?") (unit 1)
+          (reference "J2") (unit 1)
         )
       )
     )
@@ -1460,7 +1460,7 @@
   (symbol (lib_id "Comparator:LM339") (at 140.97 81.28 0) (unit 5)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid d4afd0b5-7ad6-41d1-bc12-2fe67f056cd1)
-    (property "Reference" "U?" (at 139.7 80.645 0)
+    (property "Reference" "U6" (at 139.7 80.645 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "LM339" (at 139.7 83.185 0)
@@ -1489,7 +1489,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 5)
+          (reference "U6") (unit 5)
         )
       )
     )
@@ -1498,7 +1498,7 @@
   (symbol (lib_id "Comparator:LM339") (at 149.86 92.71 0) (unit 2)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid d776852b-aa9e-4d3e-ae89-b46cbe35671a)
-    (property "Reference" "U?" (at 149.86 83.82 0)
+    (property "Reference" "U6" (at 149.86 83.82 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 149.86 86.36 0)
@@ -1527,7 +1527,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 2)
+          (reference "U6") (unit 2)
         )
       )
     )
@@ -1536,7 +1536,7 @@
   (symbol (lib_id "Comparator:LM339") (at 90.17 34.29 0) (unit 2)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid df177d88-05cd-409e-ab97-d23efefa42c9)
-    (property "Reference" "U?" (at 90.17 25.4 0)
+    (property "Reference" "U3" (at 90.17 25.4 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 90.17 27.94 0)
@@ -1565,7 +1565,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 2)
+          (reference "U3") (unit 2)
         )
       )
     )
@@ -1574,7 +1574,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 85.09 0) (unit 4)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid e149d2c3-991a-4681-b9eb-283b13f9f37b)
-    (property "Reference" "U?" (at 116.84 76.2 0)
+    (property "Reference" "U3" (at 116.84 76.2 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 78.74 0)
@@ -1603,7 +1603,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 4)
+          (reference "U3") (unit 4)
         )
       )
     )
@@ -1612,7 +1612,7 @@
   (symbol (lib_id "Comparator:LM339") (at 116.84 127 0) (unit 3)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid eb0bf977-45f2-4036-a52f-d1607b6cab34)
-    (property "Reference" "U?" (at 116.84 118.11 0)
+    (property "Reference" "U4" (at 116.84 118.11 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "LM339" (at 116.84 120.65 0)
@@ -1641,7 +1641,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
-          (reference "U?") (unit 3)
+          (reference "U4") (unit 3)
         )
       )
     )
