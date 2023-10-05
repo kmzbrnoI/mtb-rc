@@ -494,7 +494,7 @@
     (pin "3" (uuid 4f6c5d5c-a22d-4dc1-9d3d-3073570d68aa))
     (pin "4" (uuid f009872f-b1e0-4a9b-96a0-5209c8196ef6))
     (instances
-      (project "mooster"
+      (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J?") (unit 1)
         )
@@ -525,7 +525,7 @@
     (pin "7" (uuid 88d5b51e-171f-4de6-9abc-52d59512328d))
     (pin "8" (uuid ced62969-bcd5-48cb-bb46-e73d623cfd7a))
     (instances
-      (project "mooster"
+      (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "U?") (unit 1)
         )
@@ -556,7 +556,7 @@
     (pin "7" (uuid 34ebcb37-32e5-4817-932e-fb7aaf8aff82))
     (pin "8" (uuid 8d50d482-dcae-4921-bea3-f4ad0b3830f9))
     (instances
-      (project "mooster"
+      (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "U?") (unit 1)
         )
@@ -599,7 +599,7 @@
       (uuid f4614347-d779-40d5-8a92-3ad46c0389fb)
     )
     (instances
-      (project "mooster"
+      (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63" (page "3"))
       )
     )
@@ -624,7 +624,7 @@
       (uuid edd470ca-9732-4ba7-ac6e-4155edd6b624)
     )
     (instances
-      (project "mooster"
+      (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63" (page "2"))
       )
     )
