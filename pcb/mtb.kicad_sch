@@ -7,10 +7,11 @@
   (title_block
     (title "RailComDet - MTB part")
     (date "2023-10-05")
-    (rev "1.0")
     (company "Laboratory of railway vehicles control")
     (comment 1 "Kateřina Hanáková")
     (comment 2 "https://github.com/kmzbrnoI/railcomdet")
+    (comment 3 "https://creativecommons.org/licenses/by-sa/4.0/")
+    (comment 4 "Released under the Creative Commons Attribution-ShareAlike 4.0 License")
   )
 
   (lib_symbols

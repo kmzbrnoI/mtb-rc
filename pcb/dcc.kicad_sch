@@ -4,6 +4,15 @@
 
   (paper "A4")
 
+  (title_block
+    (title "RailComDet - DCC part")
+    (company "Laboratory of railway vehicles control")
+    (comment 1 "Kateřina Hanáková")
+    (comment 2 "https://github.com/kmzbrnoI/railcomdet")
+    (comment 3 "https://creativecommons.org/licenses/by-sa/4.0/")
+    (comment 4 "Released under the Creative Commons Attribution-ShareAlike 4.0 License")
+  )
+
   (lib_symbols
     (symbol "4xxx:4052" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (at -7.62 19.05 0)

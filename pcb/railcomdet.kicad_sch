@@ -4,6 +4,17 @@
 
   (paper "A4")
 
+  (title_block
+    (title "RailComDet - root")
+    (date "2023-10-23")
+    (rev "1.0")
+    (company "Laboratory of railway vehicles control")
+    (comment 1 "Kateřina Hanáková")
+    (comment 2 "https://github.com/kmzbrnoI/railcomdet")
+    (comment 3 "https://creativecommons.org/licenses/by-sa/4.0/")
+    (comment 4 "Released under the Creative Commons Attribution-ShareAlike 4.0 License")
+  )
+
   (lib_symbols
     (symbol "Connector:Screw_Terminal_01x02" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "J" (at 0 2.54 0)
