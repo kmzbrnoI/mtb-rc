@@ -177,7 +177,9 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      "multiple_net_names|1828800|254000|7dc55c4e-74fd-4bb6-a030-af7264f92e65|6080e0a5-4688-4a20-8b90-a019474a59bd|||"
+    ],
     "meta": {
       "version": 0
     },
@@ -380,7 +382,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
-      "simulation_model_issue": "error",
+      "simulation_model_issue": "ignore",
       "unannotated": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
@@ -392,7 +394,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "mooster.kicad_pro",
+    "filename": "railcomdet.kicad_pro",
     "version": 1
   },
   "net_settings": {
