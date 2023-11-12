@@ -3911,7 +3911,7 @@
     (property "Value" "200mA" (at 260.35 24.13 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at 265.43 26.67 0)
+    (property "Footprint" "Fuse:Fuse_1812_4532Metric_Pad1.30x3.40mm_HandSolder" (at 265.43 26.67 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 260.35 27.94 0)
