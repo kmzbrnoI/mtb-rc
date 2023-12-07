@@ -3603,7 +3603,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x05_Odd_Even") (at 74.93 176.53 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0aea7ffd-79ae-4bba-9c69-4f3b9e4e30b1)
-    (property "Reference" "J5" (at 76.2 165.9382 0)
+    (property "Reference" "J8" (at 76.2 165.9382 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "PROG/DEBUG" (at 76.2 168.2496 0)
@@ -3631,7 +3631,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/c65c8567-2dc1-4e1e-ba1a-da7bb38dcfe3"
-          (reference "J5") (unit 1)
+          (reference "J8") (unit 1)
         )
       )
       (project "dc01 (2)"
@@ -5309,7 +5309,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x02") (at 31.75 72.39 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid dc01b919-9319-4439-9b97-cf19f7b78812)
-    (property "Reference" "J4" (at 31.75 80.01 0)
+    (property "Reference" "J7" (at 31.75 80.01 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "PINHEADER" (at 31.75 77.47 0)
@@ -5326,7 +5326,7 @@
     (instances
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/c65c8567-2dc1-4e1e-ba1a-da7bb38dcfe3"
-          (reference "J4") (unit 1)
+          (reference "J7") (unit 1)
         )
       )
     )

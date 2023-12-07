@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 0,
+    "active_layer": 31,
     "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [],
@@ -44,7 +44,6 @@
       14,
       15,
       16,
-      17,
       18,
       19,
       20,
@@ -64,11 +63,11 @@
       35,
       36
     ],
-    "visible_layers": "fffffff_ffffffff",
+    "visible_layers": "ffeffcf_ffffffff",
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "mooster.kicad_prl",
+    "filename": "railcomdet.kicad_prl",
     "version": 3
   },
   "project": {
