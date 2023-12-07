@@ -3181,7 +3181,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6c3387fa-0095-4622-8b14-c59f6ec346fa)
   )
-  (text "Diodes: max. 1.65 W both.\nTypically max 0.8 W each (DCC).\nResistors: 0.2 W each.\nImplement cooling!"
+  (text "Diodes: max. 1.2 W both.\nTypically max 0.6 W each (DCC).\nResistors: 0.2 W each.\nImplement cooling!"
     (at 164.465 144.145 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 72d43081-d6e7-4861-87cb-befe353f6f18)
