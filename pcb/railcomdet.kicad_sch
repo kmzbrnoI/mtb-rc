@@ -1800,6 +1800,31 @@
     )
   )
 
+  (symbol (lib_id "power:GNDA") (at 101.6 31.75 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 0ded8c89-b863-45ee-90a4-fd53bea2aced)
+    (property "Reference" "#PWR02" (at 101.6 38.1 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GNDA" (at 101.6 36.83 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 101.6 31.75 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 101.6 31.75 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 0b57969b-cca1-4377-986f-3f54c2ccc707))
+    (instances
+      (project "railcomdet"
+        (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
+          (reference "#PWR02") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "Isolator:VO0631T") (at 143.51 106.68 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 196eda82-d5a7-4d1e-b53b-f41b5e23c980)
@@ -1903,31 +1928,6 @@
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J1") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "power:GND") (at 101.6 31.75 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 2d1d64e5-2b21-48d9-a891-d08811723126)
-    (property "Reference" "#PWR02" (at 101.6 38.1 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (at 101.6 36.83 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (at 101.6 31.75 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 101.6 31.75 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 3e961adc-9fe1-4ca2-be73-d508483d6de9))
-    (instances
-      (project "railcomdet"
-        (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
-          (reference "#PWR02") (unit 1)
         )
       )
     )
@@ -2502,6 +2502,31 @@
     )
   )
 
+  (symbol (lib_id "power:+5VA") (at 101.6 21.59 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 894503db-e8ad-427f-b466-33bd56ce82b9)
+    (property "Reference" "#PWR01" (at 101.6 25.4 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+5VA" (at 101.6 16.51 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 101.6 21.59 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 101.6 21.59 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 0a02eb2d-99d8-4b7b-8c50-1f33eddbf310))
+    (instances
+      (project "railcomdet"
+        (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
+          (reference "#PWR01") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "power:+3V3") (at 153.67 96.52 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8df007ae-9a88-4eb1-9dd3-42e35bec36df)
@@ -3028,31 +3053,6 @@
       (project "railcomdet"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR010") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "power:+5V") (at 101.6 21.59 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid cef5be3b-2586-40f0-9bdd-414a0aadba9a)
-    (property "Reference" "#PWR01" (at 101.6 25.4 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "+5V" (at 101.6 16.51 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (at 101.6 21.59 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 101.6 21.59 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid fdeb9cbb-45a8-49fb-8273-28957bcc1340))
-    (instances
-      (project "railcomdet"
-        (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
-          (reference "#PWR01") (unit 1)
         )
       )
     )
