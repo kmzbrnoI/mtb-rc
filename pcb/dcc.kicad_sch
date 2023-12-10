@@ -5,7 +5,8 @@
   (paper "A4")
 
   (title_block
-    (title "RailComDet - DCC part")
+    (title "MTB-RC - MTBbus RailCom detector - DCC schematic")
+    (rev "see root")
     (company "Laboratory of railway vehicles control")
     (comment 1 "Kateřina Hanáková")
     (comment 2 "https://github.com/kmzbrnoI/railcomdet")
@@ -3876,7 +3877,7 @@
     (property "Reference" "D3" (at 149.86 136.2075 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "Yellow" (at 147.32 136.2075 0)
+    (property "Value" "WHITE" (at 147.32 136.2075 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder" (at 143.51 134.62 0)
