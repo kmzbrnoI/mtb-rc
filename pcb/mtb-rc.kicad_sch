@@ -10,7 +10,7 @@
     (rev "1.0")
     (company "Laboratory of railway vehicles control")
     (comment 1 "Kateřina Hanáková")
-    (comment 2 "https://github.com/kmzbrnoI/railcomdet")
+    (comment 2 "https://github.com/kmzbrnoI/mtb-rc")
     (comment 3 "https://creativecommons.org/licenses/by-sa/4.0/")
     (comment 4 "Released under the Creative Commons Attribution-ShareAlike 4.0 License")
   )
@@ -1688,7 +1688,7 @@
     (pin "1" (uuid 63567982-43ed-4b77-963f-af03fc5ea3e9))
     (pin "2" (uuid c3e1c8f0-eea6-432d-9368-38143ea1b870))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R8") (unit 1)
         )
@@ -1720,7 +1720,7 @@
     (pin "7" (uuid 6bbdad9b-f349-43ae-b3ae-305c8fc84068))
     (pin "8" (uuid a651bc7c-5c9f-45c4-8288-718014ca784b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "U2") (unit 1)
         )
@@ -1746,7 +1746,7 @@
     (pin "1" (uuid fd94d80e-8511-4e3e-a7d3-0874ee6d1c38))
     (pin "2" (uuid f27fbfe4-c62c-464a-bd0c-d111d78304ef))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J4") (unit 1)
         )
@@ -1771,7 +1771,7 @@
     )
     (pin "1" (uuid 392e3402-7217-4822-af7d-604b828e74d6))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR06") (unit 1)
         )
@@ -1796,7 +1796,7 @@
     )
     (pin "1" (uuid 9e9cd9e1-effd-42a8-b20e-bc1ebbfca322))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP5") (unit 1)
         )
@@ -1822,7 +1822,7 @@
     (pin "1" (uuid 747d8ad1-3151-4de0-9ae1-69f7c0b7c83d))
     (pin "2" (uuid 9cc0acd7-895e-4457-a49e-f2625dbafb03))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "C3") (unit 1)
         )
@@ -1847,7 +1847,7 @@
     )
     (pin "1" (uuid 0b57969b-cca1-4377-986f-3f54c2ccc707))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR02") (unit 1)
         )
@@ -1879,7 +1879,7 @@
     (pin "7" (uuid 86bb5c6a-1e3a-472c-96a5-81b3dac39945))
     (pin "8" (uuid e5f7d5aa-b6e1-4f1e-b6d2-a4464e94f8b3))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "U1") (unit 1)
         )
@@ -1904,7 +1904,7 @@
     )
     (pin "1" (uuid 7f90976e-dd66-4a55-81aa-fb107a25e7c9))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP11") (unit 1)
         )
@@ -1929,7 +1929,7 @@
     )
     (pin "1" (uuid ef6c09bd-0fb0-4302-a814-95316372062c))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR04") (unit 1)
         )
@@ -1955,7 +1955,7 @@
     (pin "1" (uuid e934e66f-a3a6-4c8a-8ed1-30b5d5f8f6bb))
     (pin "2" (uuid c606e18b-633f-42c1-bd6c-d077182e4872))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J1") (unit 1)
         )
@@ -1981,7 +1981,7 @@
     (pin "1" (uuid 6ff60846-469a-4d77-b886-58436dd2b206))
     (pin "2" (uuid 2113febe-f465-442f-be0c-d08146aeed1d))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R6") (unit 1)
         )
@@ -2006,7 +2006,7 @@
     )
     (pin "1" (uuid 02f1bf25-a584-4baf-949a-f4fe596a1bdc))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#FLG03") (unit 1)
         )
@@ -2031,7 +2031,7 @@
     )
     (pin "1" (uuid 22c448b7-4332-423d-bdad-5fbc2a47fc50))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR014") (unit 1)
         )
@@ -2057,7 +2057,7 @@
     (pin "1" (uuid e6b6cb85-ba74-4323-be89-51d091def0b2))
     (pin "2" (uuid 3d6cd8e8-34cc-44ef-9aea-d05a48738b8d))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R11") (unit 1)
         )
@@ -2082,7 +2082,7 @@
     )
     (pin "1" (uuid 5c7c4e7c-a547-4cbe-b592-18b14a5d9173))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#FLG02") (unit 1)
         )
@@ -2107,7 +2107,7 @@
     )
     (pin "1" (uuid 47f6e26f-d249-49ab-9b80-8ea44d5e5ea3))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR012") (unit 1)
         )
@@ -2132,7 +2132,7 @@
     )
     (pin "1" (uuid 5ba53130-bfe0-4453-ba4b-f500e12d5f2b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP1") (unit 1)
         )
@@ -2157,7 +2157,7 @@
     )
     (pin "1" (uuid 7227a9e3-952e-43be-bc62-d4b0276ebd02))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR022") (unit 1)
         )
@@ -2183,7 +2183,7 @@
     (pin "1" (uuid 13e41a48-ef5e-4f54-ab36-bb1f6486ccf8))
     (pin "2" (uuid f909e6fd-f788-4fc6-805b-1907bd69c315))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J9") (unit 1)
         )
@@ -2209,7 +2209,7 @@
     (pin "1" (uuid 5f78dd15-2b05-4a75-8fa7-8f350dc3346c))
     (pin "2" (uuid 238f5abd-6d80-43fc-af4d-54a4ae9c7d1f))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "C1") (unit 1)
         )
@@ -2235,7 +2235,7 @@
     (pin "1" (uuid e6697bb5-8d05-44ce-9a14-174849491ba3))
     (pin "2" (uuid e1989d9c-bb53-4077-80b3-effd54203d32))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J3") (unit 1)
         )
@@ -2261,7 +2261,7 @@
     (pin "1" (uuid b37e17f4-4aff-45bc-a59f-638f5870fbc4))
     (pin "2" (uuid 86139732-3fb2-4a5d-8c67-ad7b4c2cde5c))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R1") (unit 1)
         )
@@ -2286,7 +2286,7 @@
     )
     (pin "1" (uuid 8127e260-ccce-4ecd-bd78-146fe1ae2580))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#FLG01") (unit 1)
         )
@@ -2312,7 +2312,7 @@
     (pin "1" (uuid 6db59bab-d270-4ca3-ac70-5a6923f09ef1))
     (pin "2" (uuid 949ead4a-7ea1-45a9-bd8b-db68033b40e1))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J11") (unit 1)
         )
@@ -2338,7 +2338,7 @@
     (pin "1" (uuid fd0f4388-6a0f-4b80-84e8-b926d47fddaf))
     (pin "2" (uuid d66b0cba-81d1-4daa-a297-dff83bb3d70b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R5") (unit 1)
         )
@@ -2370,7 +2370,7 @@
     (pin "7" (uuid 397d5101-5dda-4d92-a9b1-dd5ea2803b38))
     (pin "8" (uuid d633a9dd-f42e-4b42-a14c-4cb39d60d40a))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "U3") (unit 1)
         )
@@ -2395,7 +2395,7 @@
     )
     (pin "1" (uuid a2767dd6-65a0-4261-ba84-89499e5059ad))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP12") (unit 1)
         )
@@ -2420,7 +2420,7 @@
     )
     (pin "1" (uuid 11d14d61-1478-4c5c-b0e3-e7fc5acc051f))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR019") (unit 1)
         )
@@ -2447,7 +2447,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/c65c8567-2dc1-4e1e-ba1a-da7bb38dcfe3"
           (reference "#SYM?") (unit 1)
         )
@@ -2474,7 +2474,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "H1") (unit 1)
         )
@@ -2500,7 +2500,7 @@
     (pin "1" (uuid 526894ca-c048-46fa-bc77-86032a2ee708))
     (pin "2" (uuid 55fbe574-3f34-47cd-95a4-a85fdfe85133))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J10") (unit 1)
         )
@@ -2525,7 +2525,7 @@
     )
     (pin "1" (uuid 2dd1c547-06e3-43f2-9b41-89486abf8d0f))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP3") (unit 1)
         )
@@ -2550,7 +2550,7 @@
     )
     (pin "1" (uuid bec0870c-e891-4172-b765-5df6c146f198))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP2") (unit 1)
         )
@@ -2575,7 +2575,7 @@
     )
     (pin "1" (uuid 0a02eb2d-99d8-4b7b-8c50-1f33eddbf310))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR01") (unit 1)
         )
@@ -2600,7 +2600,7 @@
     )
     (pin "1" (uuid 91f057e9-5c72-47ef-82eb-5e998bac3047))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR013") (unit 1)
         )
@@ -2624,7 +2624,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "H3") (unit 1)
         )
@@ -2649,7 +2649,7 @@
     )
     (pin "1" (uuid 7ccfe774-5cfc-441e-a18a-41c96ed6eba8))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP8") (unit 1)
         )
@@ -2675,7 +2675,7 @@
     (pin "1" (uuid f5ea5c36-1154-4ab7-a37b-42a00aa68897))
     (pin "2" (uuid 8a72a9a8-2247-467e-8c62-fda7b0e0a02d))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J5") (unit 1)
         )
@@ -2701,7 +2701,7 @@
     (pin "1" (uuid 0aae917f-27a1-47dd-96e0-0f5d3f7193e9))
     (pin "2" (uuid f5630d3d-ede4-4c50-aa69-a05104bc500e))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R7") (unit 1)
         )
@@ -2726,7 +2726,7 @@
     )
     (pin "1" (uuid 8f495394-31dd-424f-9eb8-4636ab096285))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#FLG04") (unit 1)
         )
@@ -2752,7 +2752,7 @@
     (pin "1" (uuid 97124270-d1f3-4c96-967c-9a7bcb0a9c43))
     (pin "2" (uuid 50863ff3-2e71-44f2-973a-3aff76f563cf))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "J2") (unit 1)
         )
@@ -2777,7 +2777,7 @@
     )
     (pin "1" (uuid 40a2c32f-d169-42b0-9aff-8b88a1b6aa25))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP6") (unit 1)
         )
@@ -2802,7 +2802,7 @@
     )
     (pin "1" (uuid c0a0a3ab-bca0-4ea8-b4f2-d775aeced275))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR020") (unit 1)
         )
@@ -2828,7 +2828,7 @@
     (pin "1" (uuid 36a3d2ba-e824-4f0e-8d21-c351ed61cc25))
     (pin "2" (uuid dab53a7d-29e2-4fd3-9458-cd5c2fe2e422))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R3") (unit 1)
         )
@@ -2853,7 +2853,7 @@
     )
     (pin "1" (uuid 64149c2a-12d9-4c76-a308-3208208987e9))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP9") (unit 1)
         )
@@ -2878,7 +2878,7 @@
     )
     (pin "1" (uuid 5c956ef8-4f71-465a-be8a-4b1320970db7))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR07") (unit 1)
         )
@@ -2903,7 +2903,7 @@
     )
     (pin "1" (uuid 15b6ffe3-0db2-4996-a8fe-ba658591bd2b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR09") (unit 1)
         )
@@ -2928,7 +2928,7 @@
     )
     (pin "1" (uuid aafb98a3-77f9-4f9a-90ac-d5008acf466b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP7") (unit 1)
         )
@@ -2954,7 +2954,7 @@
     (pin "1" (uuid d3889698-cdb7-485b-b0b8-fa39b358d7c0))
     (pin "2" (uuid 3e44c38a-497a-4284-b81b-faae0478549d))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "C2") (unit 1)
         )
@@ -2980,7 +2980,7 @@
     (pin "1" (uuid 86475249-00ba-401a-8468-86f0d1e1dca9))
     (pin "2" (uuid 7aa691f1-5f4f-46bd-9a67-99203b1df333))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R2") (unit 1)
         )
@@ -3005,7 +3005,7 @@
     )
     (pin "1" (uuid a6159bce-371f-4afe-94e6-3ae71b743bf2))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR08") (unit 1)
         )
@@ -3030,7 +3030,7 @@
     )
     (pin "1" (uuid c25b7b45-1834-4bd0-b4ca-5b492d953144))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR017") (unit 1)
         )
@@ -3055,7 +3055,7 @@
     )
     (pin "1" (uuid d155e4b1-9e28-43aa-9450-ae9fa07513f1))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR018") (unit 1)
         )
@@ -3081,7 +3081,7 @@
     (pin "1" (uuid bf562699-e509-4c28-83af-2ebd7d752d8e))
     (pin "2" (uuid cac1c059-fca6-4096-bcda-4f7878eeb954))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R13") (unit 1)
         )
@@ -3106,7 +3106,7 @@
     )
     (pin "1" (uuid bccbe410-6a3f-4884-8535-71485119151f))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR010") (unit 1)
         )
@@ -3132,7 +3132,7 @@
     (pin "1" (uuid c173e771-bd27-433e-af84-6f7463a0f0ba))
     (pin "2" (uuid f109ab19-6706-4e2d-abbc-182d0739e5a7))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R4") (unit 1)
         )
@@ -3157,7 +3157,7 @@
     )
     (pin "1" (uuid 458b7ff3-dbcc-485f-a077-945b402deb26))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR011") (unit 1)
         )
@@ -3182,7 +3182,7 @@
     )
     (pin "1" (uuid 57bcf123-950d-43c2-bcb1-7673138ac669))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR05") (unit 1)
         )
@@ -3208,7 +3208,7 @@
     (pin "1" (uuid 2e5fcbea-0c70-4863-bed8-5d5e1c2f4da8))
     (pin "2" (uuid b3bdb9d0-2514-4b4a-80f1-67fd4138f999))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R10") (unit 1)
         )
@@ -3233,7 +3233,7 @@
     )
     (pin "1" (uuid f43ec47a-e20c-4567-a3c7-b3de8cc1e1a0))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP10") (unit 1)
         )
@@ -3259,7 +3259,7 @@
     (pin "1" (uuid bcdfc555-ff75-40b2-9651-f6cb4927cae9))
     (pin "2" (uuid 3ebad5e3-9757-4e54-85cc-677ef8df1e04))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R9") (unit 1)
         )
@@ -3285,7 +3285,7 @@
     (pin "1" (uuid db969751-cc73-44f8-8654-7d4cbeec3260))
     (pin "2" (uuid 17e211f7-bc3b-4127-a9ec-da040e0e023b))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "C4") (unit 1)
         )
@@ -3310,7 +3310,7 @@
     )
     (pin "1" (uuid a5b27edf-f9d7-40cd-a4e4-875d0d2c38f3))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR016") (unit 1)
         )
@@ -3334,7 +3334,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "H4") (unit 1)
         )
@@ -3358,7 +3358,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "H2") (unit 1)
         )
@@ -3383,7 +3383,7 @@
     )
     (pin "1" (uuid de347eff-07f2-413e-853a-d92e055c9f99))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR021") (unit 1)
         )
@@ -3408,7 +3408,7 @@
     )
     (pin "1" (uuid e35aea49-93de-4fb7-a7a2-9e067560ddaf))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR015") (unit 1)
         )
@@ -3433,7 +3433,7 @@
     )
     (pin "1" (uuid 4a99a997-1744-4e26-9410-a4f946abcfec))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "TP4") (unit 1)
         )
@@ -3458,7 +3458,7 @@
     )
     (pin "1" (uuid 9d131dd5-9481-47e0-9fed-915aa367b252))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "#PWR03") (unit 1)
         )
@@ -3484,7 +3484,7 @@
     (pin "1" (uuid f7f37e85-ce90-4fac-88b5-7eceaf41530a))
     (pin "2" (uuid acd6a99e-16d5-4ea1-93fb-fbca6b7394e2))
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63"
           (reference "R12") (unit 1)
         )
@@ -3543,7 +3543,7 @@
       (uuid 681d2164-dc6a-4c8e-a2ce-20112a5b6ac5)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63" (page "3"))
       )
     )
@@ -3624,7 +3624,7 @@
       (uuid 75af698b-e032-42a6-98e5-a892f62b19c7)
     )
     (instances
-      (project "railcomdet"
+      (project "mtb-rc"
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63" (page "2"))
       )
     )
