@@ -7,7 +7,7 @@
   (title_block
     (title "MTB-RC - MTBbus RailCom detector - root schematic")
     (date "2023-10-23")
-    (rev "1.0")
+    (rev "1.1")
     (company "Laboratory of railway vehicles control")
     (comment 1 "Kateřina Hanáková")
     (comment 2 "https://github.com/kmzbrnoI/mtb-rc")

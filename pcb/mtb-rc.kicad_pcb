@@ -12041,7 +12041,7 @@
   (gr_text "K" (at 139.192 42.799 180) (layer "F.SilkS") (tstamp 92a0da49-9c8c-4be8-a7d5-ab3cb7e3f0b9)
     (effects (font (size 2 2) (thickness 0.2)))
   )
-  (gr_text "MTB-RC v1.0\nMTBbus RailCom detector" (at 157.48 53.721) (layer "F.SilkS") (tstamp 9b249206-d498-49d1-99ac-4afdbfd040a6)
+  (gr_text "MTB-RC v1.1\nMTBbus RailCom detector" (at 157.48 53.721) (layer "F.SilkS") (tstamp 9b249206-d498-49d1-99ac-4afdbfd040a6)
     (effects (font (size 2 2) (thickness 0.25)))
   )
   (gr_text "STLINK" (at 160.147 73.279 90) (layer "F.SilkS") (tstamp a0e1c63f-3004-4a9b-9a0f-d4fdb5ba8d83)
