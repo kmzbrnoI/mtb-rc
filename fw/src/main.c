@@ -37,15 +37,26 @@ void init(void) {
     __HAL_RCC_DMA1_CLK_ENABLE();
     __HAL_AFIO_REMAP_SWJ_NOJTAG();
 
+    gpio_init();
+
+    gpio_pin_write(pin_led_red, true);
+    gpio_pin_write(pin_led_green, true);
+    gpio_pin_write(pin_led_blue, true);
+
     if (!init_tim1())
         error_handler();
     if (!init_tim2())
         error_handler();
-    gpio_init();
     if (!mtbbus_init())
         error_handler();
     if (!railcom_init())
         error_handler();
+
+    HAL_Delay(200);
+
+    gpio_pin_write(pin_led_red, false);
+    gpio_pin_write(pin_led_green, false);
+    gpio_pin_write(pin_led_blue, false);
 }
 
 bool init_clock(void) {
