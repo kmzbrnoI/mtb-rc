@@ -8,8 +8,6 @@
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart3_rx;
-extern DMA_HandleTypeDef hdma_usart3_tx;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart3;
 
@@ -64,14 +62,6 @@ void SysTick_Handler(void) {
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
-
-void DMA1_Channel2_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&hdma_usart3_tx);
-}
-
-void DMA1_Channel3_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&hdma_usart3_rx);
-}
 
 void DMA1_Channel5_IRQHandler(void) {
     HAL_DMA_IRQHandler(&hdma_usart1_rx);
