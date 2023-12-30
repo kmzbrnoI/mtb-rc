@@ -29,7 +29,10 @@ bool mtbbus_init(void) {
     gpio_pin_init(pin_mtbbus_tx, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_pin_init(pin_mtbbus_rx, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
 
-    /* USART3 DMA Init */
+    /* USART3 RX DMA Init */
+    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
+
     /* USART3_RX Init */
     hdma_usart3_rx.Instance = DMA1_Channel3;
     hdma_usart3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -43,6 +46,10 @@ bool mtbbus_init(void) {
         return false;
 
     __HAL_LINKDMA(&huart3,hdmarx,hdma_usart3_rx);
+
+    /* USART3 TX DMA Init */
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
     /* USART3_TX Init */
     hdma_usart3_tx.Instance = DMA1_Channel2;

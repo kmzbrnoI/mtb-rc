@@ -41,6 +41,7 @@ void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
 void gpio_init(void) {
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE(); // TODO: delete? was in generated template
 
     // GPIOA outputs
     gpio_pins_init(
@@ -60,6 +61,7 @@ void gpio_init(void) {
         gpio_pin_init(pins_addr[i], GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, false);
 
     gpio_pin_init(pin_btn, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
+    gpio_pin_init(pin_dcc, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
 }
 
 void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
