@@ -58,6 +58,8 @@ void gpio_init(void) {
 
     for (size_t i = 0; i < MTBBUS_ADDR_INPUTS; i++)
         gpio_pin_init(pins_addr[i], GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, false);
+
+    gpio_pin_init(pin_btn, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
 }
 
 void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
@@ -78,6 +80,10 @@ void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
 
 inline void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t speed, bool de_init_first) {
     gpio_pins_init(pin.port, pin.pin, mode, pull, speed, de_init_first);
+}
+
+void gpio_pin_deinit(PinDef pin) {
+    HAL_GPIO_DeInit(pin.port, pin.pin);
 }
 
 bool gpio_pin_read(PinDef pin) {

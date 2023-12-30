@@ -2,6 +2,7 @@
 
 #include "mtbbus.h"
 #include "stm32f1xx_hal.h"
+#include "gpio.h"
 
 /* Local variables -----------------------------------------------------------*/
 
@@ -25,21 +26,8 @@ bool mtbbus_init(void) {
 
     __HAL_RCC_USART3_CLK_ENABLE();
 
-    // TODO
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**USART3 GPIO Configuration
-    PB10     ------> USART3_TX
-    PB11     ------> USART3_RX
-    */
-    /*GPIO_InitStruct.Pin = MTB_TX_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(MTB_TX_GPIO_Port, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = MTB_RX_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(MTB_RX_GPIO_Port, &GPIO_InitStruct);*/
+    gpio_pin_init(pin_mtbbus_tx, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
+    gpio_pin_init(pin_mtbbus_rx, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
 
     /* USART3 DMA Init */
     /* USART3_RX Init */
@@ -80,18 +68,17 @@ bool mtbbus_init(void) {
 void mtbbus_deinit(void) {
     __HAL_RCC_USART3_CLK_DISABLE();
 
-    /**USART3 GPIO Configuration
-    PB10     ------> USART3_TX
-    PB11     ------> USART3_RX
-    */
-    // HAL_GPIO_DeInit(GPIOB, MTB_TX_Pin|MTB_RX_Pin); TODO
+    gpio_pin_deinit(pin_mtbbus_tx);
+    gpio_pin_deinit(pin_mtbbus_rx);
 
-    /* USART3 DMA DeInit */
     HAL_DMA_DeInit(huart3.hdmarx);
     HAL_DMA_DeInit(huart3.hdmatx);
 
-    /* USART3 interrupt DeInit */
     HAL_NVIC_DisableIRQ(USART3_IRQn);
+}
+
+void USART3_IRQHandler(void) {
+    HAL_UART_IRQHandler(&huart3);
 }
 
 void DMA1_Channel2_IRQHandler(void) {

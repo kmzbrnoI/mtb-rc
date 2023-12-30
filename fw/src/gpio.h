@@ -41,6 +41,7 @@ extern const PinDef pin_debug_2;
 void gpio_init(void);
 
 void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t speed, bool de_init_first);
+void gpio_pin_deinit(PinDef pin);
 bool gpio_pin_read(PinDef pin);
 void gpio_pin_write(PinDef pin, bool value);
 void gpio_pin_toggle(PinDef pin);

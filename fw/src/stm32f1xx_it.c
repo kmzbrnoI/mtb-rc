@@ -7,9 +7,6 @@
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart3;
 
 /* Implementation ------------------------------------------------------------*/
 
@@ -63,10 +60,6 @@ void SysTick_Handler(void) {
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
 
-void DMA1_Channel5_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&hdma_usart1_rx);
-}
-
 // TIM1 capture compare interrupt
 void TIM1_CC_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim1);
@@ -75,12 +68,4 @@ void TIM1_CC_IRQHandler(void) {
 // TIM2 global interrupt.
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
-}
-
-void USART1_IRQHandler(void) {
-    HAL_UART_IRQHandler(&huart1);
-}
-
-void USART3_IRQHandler(void) {
-    HAL_UART_IRQHandler(&huart3);
 }
