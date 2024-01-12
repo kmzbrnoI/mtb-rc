@@ -4820,7 +4820,7 @@
   (symbol (lib_id "Device:R") (at 92.71 64.77 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 848a3995-2e4c-4349-9df6-4653c015a86b)
-    (property "Reference" "R40" (at 92.71 59.69 90)
+    (property "Reference" "R40" (at 92.71 60.325 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 92.71 62.23 90)
