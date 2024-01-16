@@ -4538,7 +4538,7 @@
     (property "Reference" "Y1" (at 101.6 69.85 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "14.7456MHz" (at 97.79 76.835 90)
+    (property "Value" "12MHz" (at 97.79 76.835 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "Crystal:Crystal_HC49-U_Vertical" (at 97.79 71.12 0)
