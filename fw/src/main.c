@@ -28,9 +28,13 @@ int main(void) {
 /* Init ----------------------------------------------------------------------*/
 
 void init(void) {
-    HAL_Init();
-    if (!init_clock())
-        error_handler();
+    bool success;
+
+    success = (HAL_Init() == HAL_OK);
+    assert_param(success);
+
+    success = init_clock();
+    assert_param(success);
 
     __HAL_RCC_AFIO_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
@@ -43,14 +47,17 @@ void init(void) {
     gpio_pin_write(pin_led_green, true);
     gpio_pin_write(pin_led_blue, true);
 
-    if (!init_tim1())
-        error_handler();
-    if (!init_tim2())
-        error_handler();
-    if (!mtbbus_init())
-        error_handler();
-    if (!railcom_init())
-        error_handler();
+    success = init_tim1();
+    assert_param(success);
+
+    success = init_tim2();
+    assert_param(success);
+
+    success = mtbbus_init();
+    assert_param(success);
+
+    success = railcom_init();
+    assert_param(success);
 
     HAL_Delay(200);
 
@@ -174,12 +181,6 @@ bool init_tim2(void) {
 
 /* System stuff --------------------------------------------------------------*/
 
-void error_handler(void) {
-    // TODO: set LEDs etc.
-    __disable_irq();
-    while (true);
-}
-
 // Non-maskable interrupt
 void NMI_Handler(void) {
     HAL_RCC_NMI_IRQHandler();
@@ -233,6 +234,16 @@ void SysTick_Handler(void) {
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line) {
+    __disable_irq();
+
+    gpio_pin_write(pin_led_green, false);
+    gpio_pin_write(pin_led_blue, false);
+    while (1) {
+        gpio_pin_write(pin_led_red, true);
+        for (size_t i = 0; i < (1U << 20); i++) { __asm__("NOP"); }
+        gpio_pin_write(pin_led_red, false);
+        for (size_t i = 0; i < (1U << 20); i++) { __asm__("NOP"); }
+    }
 }
 #endif /* USE_FULL_ASSERT */
 

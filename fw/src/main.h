@@ -4,8 +4,6 @@
 
 #include "stm32f1xx_hal.h"
 
-void error_handler(void);
-
 /*#define DCC_Pin GPIO_PIN_0
 #define DCC_GPIO_Port GPIOA
 #define MULT1_Pin GPIO_PIN_1
