@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "mtbbus.h"
 #include "railcom.h"
+#include "config.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -30,6 +31,11 @@ int main(void) {
 
     while (true) {
         mtbbus_update();
+
+        if (config_write) {
+            config_write = false;
+            config_save();
+        }
     }
 }
 
@@ -54,9 +60,11 @@ void init(void) {
     //init_tim1();
     init_tim2();
 
+    config_load();
+
     //uint8_t _mtbbus_addr = io_get_addr_raw();
     //error_flags.bits.addr_zero = (_mtbbus_addr == 0);
-    mtbbus_init(5, MTBBUS_SPEED_115200);
+    mtbbus_init(5, config_mtbbus_speed);
     mtbbus_on_receive = mtbbus_received;
 
     railcom_init();
