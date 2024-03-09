@@ -244,7 +244,7 @@ void TIM1_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim1);
 }
 
-// TIM2 global interrupt.
+// General-purpose TIM2 @ 10 ms
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
     gpio_pin_toggle(pin_debug_1);
