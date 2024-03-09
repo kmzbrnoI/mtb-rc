@@ -3735,7 +3735,7 @@
   (symbol (lib_id "Graphic:Logo_Open_Hardware_Small") (at 275.59 158.75 0) (unit 1)
     (in_bom no) (on_board no) (dnp no) (fields_autoplaced)
     (uuid 16212c7a-6a10-4157-9a88-2d907c8d7a8b)
-    (property "Reference" "#SYM?" (at 275.59 151.765 0)
+    (property "Reference" "#SYM2" (at 275.59 151.765 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "Logo_Open_Hardware_Small" (at 275.59 164.465 0)
@@ -3752,9 +3752,6 @@
     )
     (instances
       (project "mtb-rc"
-        (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/c65c8567-2dc1-4e1e-ba1a-da7bb38dcfe3"
-          (reference "#SYM?") (unit 1)
-        )
         (path "/3e59d29f-2657-4552-9290-3c54fadfdf63/e5256faa-a48e-4175-bec4-bd0fa3c5f991"
           (reference "#SYM2") (unit 1)
         )
