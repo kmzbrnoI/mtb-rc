@@ -51,7 +51,7 @@ void init(void) {
     gpio_pin_write(pin_led_green, true);
     gpio_pin_write(pin_led_blue, true);
 
-    init_tim1();
+    //init_tim1();
     init_tim2();
 
     //uint8_t _mtbbus_addr = io_get_addr_raw();
@@ -103,6 +103,9 @@ void init_clock(void) {
 void init_tim1(void) {
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
+    //TIM_IC_InitTypeDef sConfigIC = {0};
+
+    __HAL_RCC_TIM1_CLK_ENABLE();
 
     htim1.Instance = TIM1;
     htim1.Init.Prescaler = 0;
@@ -113,17 +116,23 @@ void init_tim1(void) {
     htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     assert_param(HAL_TIM_Base_Init(&htim1) == HAL_OK);
 
-    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
+    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
     sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
     sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
     sClockSourceConfig.ClockFilter = 0;
     assert_param(HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) == HAL_OK);
 
+    //assert_param(HAL_TIM_IC_Init(&htim2) == HAL_OK);
+
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) == HAL_OK);
 
-    __HAL_RCC_TIM1_CLK_ENABLE();
+    /*sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+    sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+    sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+    sConfigIC.ICFilter = 0;
+    assert_param(HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) == HAL_OK);*/
 
     /* TIM1 interrupt Init */
     HAL_NVIC_SetPriority(TIM1_CC_IRQn, 0, 0);
@@ -131,14 +140,17 @@ void init_tim1(void) {
 }
 
 void init_tim2(void) {
+    // General-purpose TIM2 @ 10 ms
+
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
-    TIM_IC_InitTypeDef sConfigIC = {0};
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
 
     htim2.Instance = TIM2;
-    htim2.Init.Prescaler = 0;
+    htim2.Init.Prescaler = 100;
     htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim2.Init.Period = 65535;
+    htim2.Init.Period = 4800;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     assert_param(HAL_TIM_Base_Init(&htim2) == HAL_OK);
@@ -146,23 +158,15 @@ void init_tim2(void) {
     sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
     assert_param(HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) == HAL_OK);
 
-    assert_param(HAL_TIM_IC_Init(&htim2) == HAL_OK);
-
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) == HAL_OK);
 
-    sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
-    sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-    sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-    sConfigIC.ICFilter = 0;
-    assert_param(HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) == HAL_OK);
-
-    __HAL_RCC_TIM2_CLK_ENABLE();
-
     /* TIM2 interrupt Init */
     HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM2_IRQn);
+
+    HAL_TIM_Base_Start_IT(&htim2);
 }
 
 /* System stuff --------------------------------------------------------------*/
@@ -235,14 +239,15 @@ void assert_failed(uint8_t *file, uint32_t line) {
 
 /* "Application" code --------------------------------------------------------*/
 
-// TIM1 capture compare interrupt
-void TIM1_CC_IRQHandler(void) {
+// TIM1 global interrupt
+void TIM1_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim1);
 }
 
 // TIM2 global interrupt.
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
+    gpio_pin_toggle(pin_debug_1);
 }
 
 /* MTBbus --------------------------------------------------------------------*/

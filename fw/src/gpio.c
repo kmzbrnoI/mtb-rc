@@ -47,7 +47,7 @@ void gpio_init(void) {
     gpio_pins_init(
         GPIOA,
         pin_mult1.pin | pin_mult2.pin | pin_debug_1.pin | pin_debug_2.pin,
-        GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, false
+        GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false
     );
 
     // GPIOB outputs
