@@ -17,12 +17,19 @@ static void init_clock(void);
 static void init_tim1(void);
 static void init_tim2(void);
 
+void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len); // intentionally not static
+static void mtbbus_send_ack(void);
+static void mtbbus_send_inputs(uint8_t message_code);
+static void mtbbus_send_error(uint8_t code);
+static inline void leds_update(void);
+
 /* Implementation ------------------------------------------------------------*/
 
 int main(void) {
     init();
 
     while (true) {
+        mtbbus_update();
     }
 }
 
@@ -36,7 +43,6 @@ void init(void) {
 
     __HAL_RCC_AFIO_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_RCC_DMA1_CLK_ENABLE();
     __HAL_AFIO_REMAP_SWJ_NOJTAG();
 
     gpio_init();
@@ -47,7 +53,12 @@ void init(void) {
 
     init_tim1();
     init_tim2();
+
+    //uint8_t _mtbbus_addr = io_get_addr_raw();
+    //error_flags.bits.addr_zero = (_mtbbus_addr == 0);
     mtbbus_init(5, MTBBUS_SPEED_115200);
+    mtbbus_on_receive = mtbbus_received;
+
     railcom_init();
 
     HAL_Delay(200);
@@ -232,4 +243,68 @@ void TIM1_CC_IRQHandler(void) {
 // TIM2 global interrupt.
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
+}
+
+/* MTBbus --------------------------------------------------------------------*/
+
+void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len) {
+    //if (!initialized)
+    //    return;
+
+    //error_flags.bits.bad_mtbbus_polarity = false;
+    /*if (led_gr_counter == 0) {
+        io_led_green_on();
+        led_gr_counter = LED_GR_ON;
+    }*/
+    //_delay_us(2);
+
+    /*mtbbus_timeout = 0;
+    if (mtbbus_auto_speed_in_progress)
+        mtbbus_auto_speed_received();*/
+
+    gpio_pin_toggle(pin_led_green);
+
+    switch (command_code) {
+
+    case MTBBUS_CMD_MOSI_MODULE_INQUIRY:
+        if ((!broadcast) && (data_len >= 1)) {
+            //static bool last_input_changed = false;
+            //static bool last_diag_changed = false;
+            //static bool first_scan = true;
+            //bool last_ok = data[0] & 0x01;
+            mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+
+INVALID_MSG:
+    default:
+        if (!broadcast)
+            mtbbus_send_error(MTBBUS_ERROR_UNKNOWN_COMMAND);
+
+    };
+}
+
+// Warning: functions below don't check mtbbus_can_fill_output_buf(), bacause
+// they should be called ONLY from mtbbus_received event (as MTBbus is
+// request-response based bus).
+
+void mtbbus_send_ack(void) {
+    mtbbus_output_buf[0] = 1;
+    mtbbus_output_buf[1] = MTBBUS_CMD_MISO_ACK;
+    mtbbus_send_buf_autolen();
+}
+
+void mtbbus_send_inputs(uint8_t message_code) {
+    mtbbus_output_buf[0] = 2;
+    mtbbus_output_buf[1] = message_code;
+    mtbbus_output_buf[2] = 0; // TODO
+    mtbbus_send_buf_autolen();
+}
+
+void mtbbus_send_error(uint8_t code) {
+    mtbbus_output_buf[0] = 2;
+    mtbbus_output_buf[1] = MTBBUS_CMD_MISO_ERROR;
+    mtbbus_output_buf[2] = code;
+    mtbbus_send_buf_autolen();
 }

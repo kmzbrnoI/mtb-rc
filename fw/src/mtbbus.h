@@ -13,17 +13,6 @@
 #define MTBBUS_OUTPUT_BUF_MAX_SIZE 128
 #define MTBBUS_INPUT_BUF_MAX_SIZE 128
 
-extern volatile uint8_t mtbbus_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
-extern volatile uint8_t mtbbus_output_buf_size;
-
-extern volatile uint8_t mtbbus_addr;
-extern volatile uint8_t mtbbus_speed;
-
-// ‹data› starts with Command code byte
-// ‹size› is amount of data bytes + 1
-extern void (*mtbbus_on_receive)(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len);
-extern void (*mtbbus_on_sent)();
-
 typedef enum {
     MTBBUS_SPEED_38400 = 1,
     MTBBUS_SPEED_57600 = 2,
@@ -31,6 +20,17 @@ typedef enum {
     MTBBUS_SPEED_230400 = 4,
     MTBBUS_SPEED_MAX
 } MtbBusSpeed;
+
+extern uint8_t mtbbus_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
+extern volatile uint8_t mtbbus_output_buf_size;
+
+extern volatile uint8_t mtbbus_addr;
+extern volatile MtbBusSpeed mtbbus_speed;
+
+// ‹data› starts with Command code byte
+// ‹size› is amount of data bytes + 1
+extern void (*mtbbus_on_receive)(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len);
+extern void (*mtbbus_on_sent)();
 
 void mtbbus_init(uint8_t addr, MtbBusSpeed speed);
 void mtbbus_deinit(void);
