@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include "assert.h"
 #include "main.h"
 #include "gpio.h"
 #include "mtbbus.h"
@@ -12,9 +13,9 @@ TIM_HandleTypeDef htim2;
 /* Private function prototypes -----------------------------------------------*/
 
 static void init(void);
-static bool init_clock(void);
-static bool init_tim1(void);
-static bool init_tim2(void);
+static void init_clock(void);
+static void init_tim1(void);
+static void init_tim2(void);
 
 /* Implementation ------------------------------------------------------------*/
 
@@ -28,13 +29,10 @@ int main(void) {
 /* Init ----------------------------------------------------------------------*/
 
 void init(void) {
-    bool success;
-
-    success = (HAL_Init() == HAL_OK);
+    bool success = (HAL_Init() == HAL_OK);
     assert_param(success);
 
-    success = init_clock();
-    assert_param(success);
+    init_clock();
 
     __HAL_RCC_AFIO_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
@@ -47,17 +45,10 @@ void init(void) {
     gpio_pin_write(pin_led_green, true);
     gpio_pin_write(pin_led_blue, true);
 
-    success = init_tim1();
-    assert_param(success);
-
-    success = init_tim2();
-    assert_param(success);
-
-    success = mtbbus_init();
-    assert_param(success);
-
-    success = railcom_init();
-    assert_param(success);
+    init_tim1();
+    init_tim2();
+    mtbbus_init(5, MTBBUS_SPEED_115200);
+    railcom_init();
 
     HAL_Delay(200);
 
@@ -66,7 +57,7 @@ void init(void) {
     gpio_pin_write(pin_led_blue, false);
 }
 
-bool init_clock(void) {
+void init_clock(void) {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -80,8 +71,7 @@ bool init_clock(void) {
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
-    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-        return false;
+    assert_param(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK);
 
     /** Initializes the CPU, AHB and APB buses clocks
     */
@@ -92,17 +82,14 @@ bool init_clock(void) {
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-        return false;
+    assert_param(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) == HAL_OK);
 
     /** Enables the Clock Security System
     */
     HAL_RCC_EnableCSS();
-
-    return true;
 }
 
-bool init_tim1(void) {
+void init_tim1(void) {
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
 
@@ -113,31 +100,26 @@ bool init_tim1(void) {
     htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim1.Init.RepetitionCounter = 0;
     htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_Base_Init(&htim1) == HAL_OK);
 
     sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
     sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
     sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
     sClockSourceConfig.ClockFilter = 0;
-    if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) == HAL_OK);
 
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-        return false;
+    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) == HAL_OK);
 
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     /* TIM1 interrupt Init */
     HAL_NVIC_SetPriority(TIM1_CC_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
-
-    return true;
 }
 
-bool init_tim2(void) {
+void init_tim2(void) {
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_IC_InitTypeDef sConfigIC = {0};
@@ -148,35 +130,28 @@ bool init_tim2(void) {
     htim2.Init.Period = 65535;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_Base_Init(&htim2) == HAL_OK);
 
     sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) == HAL_OK);
 
-    if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_IC_Init(&htim2) == HAL_OK);
 
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-        return false;
+    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) == HAL_OK);
 
     sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
     sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
     sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
     sConfigIC.ICFilter = 0;
-    if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
-        return false;
+    assert_param(HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) == HAL_OK);
 
     __HAL_RCC_TIM2_CLK_ENABLE();
 
     /* TIM2 interrupt Init */
     HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM2_IRQn);
-
-    return true;
 }
 
 /* System stuff --------------------------------------------------------------*/

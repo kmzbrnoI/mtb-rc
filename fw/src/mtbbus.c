@@ -21,8 +21,7 @@ bool mtbbus_init(void) {
     huart3.Init.Mode = UART_MODE_TX_RX;
     huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-    if (HAL_UART_Init(&huart3) != HAL_OK)
-        return false;
+    assert_param(HAL_UART_Init(&huart3) == HAL_OK);
 
     __HAL_RCC_USART3_CLK_ENABLE();
 
@@ -42,8 +41,7 @@ bool mtbbus_init(void) {
     hdma_usart3_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_usart3_rx.Init.Mode = DMA_NORMAL;
     hdma_usart3_rx.Init.Priority = DMA_PRIORITY_HIGH;
-    if (HAL_DMA_Init(&hdma_usart3_rx) != HAL_OK)
-        return false;
+    assert_param(HAL_DMA_Init(&hdma_usart3_rx) == HAL_OK);
 
     __HAL_LINKDMA(&huart3,hdmarx,hdma_usart3_rx);
 
@@ -60,16 +58,13 @@ bool mtbbus_init(void) {
     hdma_usart3_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_usart3_tx.Init.Mode = DMA_NORMAL;
     hdma_usart3_tx.Init.Priority = DMA_PRIORITY_HIGH;
-    if (HAL_DMA_Init(&hdma_usart3_tx) != HAL_OK)
-        return false;
+    assert_param(HAL_DMA_Init(&hdma_usart3_tx) == HAL_OK);
 
     __HAL_LINKDMA(&huart3,hdmatx,hdma_usart3_tx);
 
     /* USART3 interrupt Init */
     HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USART3_IRQn);
-
-    return true;
 }
 
 void mtbbus_deinit(void) {

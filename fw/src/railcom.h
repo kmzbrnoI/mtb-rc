@@ -4,5 +4,5 @@
 
 #include <stdbool.h>
 
-bool railcom_init(void);
+void railcom_init(void);
 void railcom_deinit(void);
