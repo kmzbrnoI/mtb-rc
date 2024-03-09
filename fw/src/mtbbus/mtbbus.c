@@ -66,7 +66,7 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     gpio_pin_init(pin_mtbbus_tx, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_pin_init(pin_mtbbus_rx, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_pin_init(pin_mtbbus_te, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
-    uart_in();
+    gpio_uart_in();
 
     /* USART3 interrupt Init */
     HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
@@ -90,7 +90,7 @@ void mtbbus_deinit(void) {
 
     __HAL_RCC_USART3_CLK_DISABLE();
 
-    uart_in();
+    gpio_uart_in();
     gpio_pin_deinit(pin_mtbbus_tx);
     gpio_pin_deinit(pin_mtbbus_rx);
     gpio_pin_deinit(pin_mtbbus_te);
@@ -181,13 +181,13 @@ static inline void _mtbbus_send_buf() {
 
     // All data as one transaction
     sending = true;
-    uart_out();
+    gpio_uart_out();
     HAL_StatusTypeDef result = HAL_UART_Transmit_IT(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
     assert_param(result == HAL_OK);
 }
 
 void _uart_tx_complete(UART_HandleTypeDef *huart) {
-    uart_in();
+    gpio_uart_in();
     sending = false;
     sent = true;
 }

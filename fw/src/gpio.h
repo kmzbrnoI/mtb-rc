@@ -48,5 +48,5 @@ void gpio_pin_toggle(PinDef pin);
 
 /* Higher-level functions ----------------------------------------------------*/
 
-static inline void uart_out(void) { gpio_pin_write(pin_mtbbus_te, true); }
-static inline void uart_in(void) { gpio_pin_write(pin_mtbbus_te, false); }
+static inline void gpio_uart_out(void) { gpio_pin_write(pin_mtbbus_te, true); }
+static inline void gpio_uart_in(void) { gpio_pin_write(pin_mtbbus_te, false); }
