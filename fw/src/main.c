@@ -7,11 +7,13 @@
 #include "railcom.h"
 #include "config.h"
 #include "diag.h"
+#include "inputs.h"
 
 /* Private variables ---------------------------------------------------------*/
 
 TIM_HandleTypeDef htim1;
-TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim2; // general-purpose @ 10 ms
+TIM_HandleTypeDef htim3; // general-purpose @ 500 us
 
 #define LED_GR_ON 5
 #define LED_GR_OFF 2
@@ -28,6 +30,8 @@ bool beacon = false;
 #define LED_BLUE_BEACON_ON 100
 #define LED_BLUE_BEACON_OFF 50
 uint8_t led_blue_counter = 0;
+
+volatile bool btn_debounce_to_update = false;
 
 #define MTBBUS_TIMEOUT_MAX 100 // 1 s
 volatile uint8_t mtbbus_timeout = MTBBUS_TIMEOUT_MAX; // increment each 10 ms
@@ -48,12 +52,14 @@ static void init(void);
 static void init_clock(void);
 static void init_tim1(void);
 static void init_tim2(void);
+static void init_tim3(void);
 
 void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len); // intentionally not static
 static void mtbbus_send_ack(void);
 static void mtbbus_send_inputs(uint8_t message_code);
 static void mtbbus_send_error(uint8_t code);
 static void mtbbus_update_polarity(void);
+static inline bool mtbbus_addressed(void);
 
 static void autodetect_mtbbus_speed(void);
 static void autodetect_mtbbus_speed_stop(void);
@@ -63,6 +69,9 @@ static void mtbbus_auto_speed_received(void);
 static void leds_update(void);
 static void led_red_ok(void);
 
+static void btn_short_press(void);
+static void btn_long_press(void);
+
 /* Implementation ------------------------------------------------------------*/
 
 int main(void) {
@@ -71,9 +80,19 @@ int main(void) {
     while (true) {
         mtbbus_update();
 
+        if (btn_debounce_to_update) {
+            btn_debounce_to_update = false;
+            btn_debounce_update();
+        }
+
         if (config_write) {
             config_write = false;
             config_save();
+        }
+
+        if (btn_press_time == BTN_PRESS_1S) {
+            btn_press_time = 0xFF;
+            btn_long_press();
         }
 
         if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer == MTBBUS_AUTO_SPEED_TIMEOUT))
@@ -107,6 +126,7 @@ void init(void) {
 
     //init_tim1();
     init_tim2();
+    init_tim3();
 
     config_load();
 
@@ -226,6 +246,36 @@ void init_tim2(void) {
     HAL_TIM_Base_Start_IT(&htim2);
 }
 
+void init_tim3(void) {
+    // General-purpose TIM3 @ 500 us
+
+    TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+    TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+    __HAL_RCC_TIM3_CLK_ENABLE();
+
+    htim3.Instance = TIM3;
+    htim3.Init.Prescaler = 100;
+    htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim3.Init.Period = 240;
+    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    assert_param(HAL_TIM_Base_Init(&htim3) == HAL_OK);
+
+    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    assert_param(HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) == HAL_OK);
+
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) == HAL_OK);
+
+    /* TIM3 interrupt Init */
+    HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM3_IRQn);
+
+    HAL_TIM_Base_Start_IT(&htim3);
+}
+
 /* System stuff --------------------------------------------------------------*/
 
 // Non-maskable interrupt
@@ -309,11 +359,18 @@ void TIM2_IRQHandler(void) {
     if (mtbbus_timeout < MTBBUS_TIMEOUT_MAX)
         mtbbus_timeout++;
 
-//    if ((btn_pressed) && (btn_press_time < BTN_PRESS_1S))
-//        btn_press_time++;
+    if ((btn_pressed) && (btn_press_time < BTN_PRESS_1S))
+        btn_press_time++;
 
     if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer < MTBBUS_AUTO_SPEED_TIMEOUT))
         mtbbus_auto_speed_timer++;
+}
+
+// General-purpose TIM3 @ 500 us
+void TIM3_IRQHandler(void) {
+    HAL_TIM_IRQHandler(&htim3);
+    gpio_pin_toggle(pin_debug_1);
+    btn_debounce_to_update = true;
 }
 
 /* MTBbus --------------------------------------------------------------------*/
@@ -413,6 +470,10 @@ void autodetect_mtbbus_speed_stop(void) {
     }
 }
 
+bool mtbbus_addressed(void) {
+    return mtbbus_timeout < MTBBUS_TIMEOUT_MAX;
+}
+
 /* LEDs ----------------------------------------------------------------------*/
 
 void leds_update(void) {
@@ -451,4 +512,34 @@ void led_red_ok(void) {
         led_red_counter = LED_RED_OK_ON;
         gpio_pin_write(pin_led_red, true);
     }
+}
+
+/* Button --------------------------------------------------------------------*/
+
+void btn_on_pressed(void) {
+    btn_press_time = 0;
+}
+
+void btn_on_released(void) {
+    if (btn_press_time < BTN_PRESS_1S)
+        btn_short_press();
+}
+
+void btn_short_press(void) {
+    if (mtbbus_auto_speed_in_progress) {
+        autodetect_mtbbus_speed_stop();
+        return;
+    }
+
+    uint8_t _mtbbus_addr = gpio_mtbbus_addr();
+    error_flags.bits.addr_zero = (_mtbbus_addr == 0);
+    mtbbus_addr = _mtbbus_addr;
+    if (mtbbus_addr != 0)
+        led_red_ok();
+    mtbbus_update_polarity();
+}
+
+void btn_long_press(void) {
+    if (!mtbbus_addressed())
+        autodetect_mtbbus_speed();
 }
