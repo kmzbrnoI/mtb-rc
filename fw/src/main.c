@@ -402,6 +402,95 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
         } else { goto INVALID_MSG; }
         break;
 
+    case MTBBUS_CMD_MOSI_INFO_REQ:
+        if (!broadcast) {
+            uint16_t bootloader_ver = config_bootloader_version();
+            mtbbus_output_buf[0] = 9;
+            mtbbus_output_buf[1] = MTBBUS_CMD_MISO_MODULE_INFO;
+            mtbbus_output_buf[2] = CONFIG_MODULE_TYPE;
+            mtbbus_output_buf[3] = (mtbbus_warn_flags.all > 0) << 2;
+            mtbbus_output_buf[4] = CONFIG_FW_MAJOR;
+            mtbbus_output_buf[5] = CONFIG_FW_MINOR;
+            mtbbus_output_buf[6] = CONFIG_PROTO_MAJOR;
+            mtbbus_output_buf[7] = CONFIG_PROTO_MINOR;
+            mtbbus_output_buf[8] = bootloader_ver >> 8;
+            mtbbus_output_buf[9] = bootloader_ver & 0xFF;
+            mtbbus_send_buf_autolen();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_SET_CONFIG:
+        if ((data_len == 0) && (!broadcast)) { // no configuration for MTB-RC module
+            mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_GET_CONFIG:
+        if (!broadcast) {
+            mtbbus_output_buf[0] = 1;
+            mtbbus_output_buf[1] = MTBBUS_CMD_MISO_MODULE_CONFIG;
+            mtbbus_send_buf_autolen();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_BEACON:
+        if (data_len >= 1) {
+            beacon = data[0];
+            if (!broadcast)
+                mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_GET_INPUT:
+        if (!broadcast) {
+            mtbbus_send_inputs(MTBBUS_CMD_MISO_INPUT_STATE);
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_RESET_OUTPUTS:
+        if (!broadcast)
+            mtbbus_send_ack();
+        break;
+
+    case MTBBUS_CMD_MOSI_CHANGE_ADDR:
+        if ((data_len >= 1) && (!broadcast)) {
+            mtbbus_send_error(MTBBUS_ERROR_UNSUPPORTED_COMMAND);
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_CHANGE_SPEED:
+        if (data_len >= 1) {
+            config_mtbbus_speed = data[0];
+            config_write = true;
+            mtbbus_set_speed(data[0]);
+
+            if (!broadcast)
+                mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_FWUPGD_REQUEST:
+        if ((data_len >= 1) && (!broadcast)) {
+            config_boot_fwupgd();
+            mtbbus_on_sent = &NVIC_SystemReset;
+            mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_REBOOT:
+        if (broadcast) {
+            NVIC_SystemReset();
+        } else {
+            mtbbus_on_sent = &NVIC_SystemReset;
+            mtbbus_send_ack();
+        }
+        break;
+
+/*    case MTBBUS_CMD_MOSI_DIAG_VALUE_REQ:
+        if (data_len >= 1) {
+            send_diag_value(data[0]);
+        } else { goto INVALID_MSG; }
+        break; */
 
 INVALID_MSG:
     default:
