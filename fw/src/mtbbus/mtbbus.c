@@ -101,6 +101,11 @@ void mtbbus_deinit(void) {
     HAL_NVIC_DisableIRQ(USART3_IRQn);
 }
 
+void mtbbus_set_speed(MtbBusSpeed speed) {
+    mtbbus_deinit();
+    mtbbus_init(mtbbus_addr, speed);
+}
+
 void USART3_IRQHandler(void) {
     HAL_UART_IRQHandler(&huart3);
 }

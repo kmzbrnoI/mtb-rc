@@ -1,15 +1,46 @@
 #include <stdbool.h>
+#include "dwt_delay.h"
 #include "assert.h"
 #include "main.h"
 #include "gpio.h"
 #include "mtbbus.h"
 #include "railcom.h"
 #include "config.h"
+#include "diag.h"
 
 /* Private variables ---------------------------------------------------------*/
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+
+#define LED_GR_ON 5
+#define LED_GR_OFF 2
+uint8_t led_gr_counter = 0;
+
+#define LED_RED_OK_ON 40
+#define LED_RED_OK_OFF 20
+#define LED_RED_ERR_ON 100
+#define LED_RED_ERR_OFF 50
+uint8_t led_red_counter = 0;
+
+bool beacon = false;
+
+#define LED_BLUE_BEACON_ON 100
+#define LED_BLUE_BEACON_OFF 50
+uint8_t led_blue_counter = 0;
+
+#define MTBBUS_TIMEOUT_MAX 100 // 1 s
+volatile uint8_t mtbbus_timeout = MTBBUS_TIMEOUT_MAX; // increment each 10 ms
+
+#define BTN_PRESS_1S 100
+volatile uint8_t btn_press_time = 0;
+
+volatile bool mtbbus_auto_speed_in_progress = false;
+volatile uint8_t mtbbus_auto_speed_timer = 0;
+volatile MtbBusSpeed mtbbus_auto_speed_last;
+#define MTBBUS_AUTO_SPEED_TIMEOUT 20 // 200 ms
+
+volatile bool t2_elapsed = false;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -22,7 +53,15 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
 static void mtbbus_send_ack(void);
 static void mtbbus_send_inputs(uint8_t message_code);
 static void mtbbus_send_error(uint8_t code);
-static inline void leds_update(void);
+static void mtbbus_update_polarity(void);
+
+static void autodetect_mtbbus_speed(void);
+static void autodetect_mtbbus_speed_stop(void);
+static void mtbbus_auto_speed_next(void);
+static void mtbbus_auto_speed_received(void);
+
+static void leds_update(void);
+static void led_red_ok(void);
 
 /* Implementation ------------------------------------------------------------*/
 
@@ -36,6 +75,14 @@ int main(void) {
             config_write = false;
             config_save();
         }
+
+        if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer == MTBBUS_AUTO_SPEED_TIMEOUT))
+            mtbbus_auto_speed_next();
+
+        if (t2_elapsed) {
+            t2_elapsed = false;
+            leds_update();
+        }
     }
 }
 
@@ -46,6 +93,7 @@ void init(void) {
     assert_param(success);
 
     init_clock();
+    DWT_Init();
 
     __HAL_RCC_AFIO_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
@@ -63,9 +111,10 @@ void init(void) {
     config_load();
 
     uint8_t _mtbbus_addr = gpio_mtbbus_addr();
-    //error_flags.bits.addr_zero = (_mtbbus_addr == 0);
+    error_flags.bits.addr_zero = (_mtbbus_addr == 0);
     mtbbus_init(_mtbbus_addr, config_mtbbus_speed);
     mtbbus_on_receive = mtbbus_received;
+    mtbbus_update_polarity();
 
     railcom_init();
 
@@ -255,6 +304,16 @@ void TIM1_IRQHandler(void) {
 // General-purpose TIM2 @ 10 ms
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
+    t2_elapsed = true;
+
+    if (mtbbus_timeout < MTBBUS_TIMEOUT_MAX)
+        mtbbus_timeout++;
+
+//    if ((btn_pressed) && (btn_press_time < BTN_PRESS_1S))
+//        btn_press_time++;
+
+    if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer < MTBBUS_AUTO_SPEED_TIMEOUT))
+        mtbbus_auto_speed_timer++;
 }
 
 /* MTBbus --------------------------------------------------------------------*/
@@ -263,18 +322,16 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
     //if (!initialized)
     //    return;
 
-    //error_flags.bits.bad_mtbbus_polarity = false;
-    /*if (led_gr_counter == 0) {
-        io_led_green_on();
+    error_flags.bits.bad_mtbbus_polarity = false;
+    if (led_gr_counter == 0) {
+        gpio_pin_write(pin_led_green, true);
         led_gr_counter = LED_GR_ON;
-    }*/
-    //_delay_us(2);
+    }
+    DWT_Delay(2);
 
-    /*mtbbus_timeout = 0;
+    mtbbus_timeout = 0;
     if (mtbbus_auto_speed_in_progress)
-        mtbbus_auto_speed_received();*/
-
-    gpio_pin_toggle(pin_led_green);
+        mtbbus_auto_speed_received();
 
     switch (command_code) {
 
@@ -319,4 +376,79 @@ void mtbbus_send_error(uint8_t code) {
     mtbbus_output_buf[1] = MTBBUS_CMD_MISO_ERROR;
     mtbbus_output_buf[2] = code;
     mtbbus_send_buf_autolen();
+}
+
+void mtbbus_update_polarity(void) {
+    error_flags.bits.bad_mtbbus_polarity = !gpio_pin_read(pin_mtbbus_rx);
+}
+
+/* MTBbus speed autodetection ------------------------------------------------*/
+
+void autodetect_mtbbus_speed(void) {
+    gpio_pin_write(pin_led_blue, true);
+    mtbbus_auto_speed_in_progress = true;
+    mtbbus_auto_speed_last = MTBBUS_SPEED_38400;
+    mtbbus_auto_speed_next();
+}
+
+void mtbbus_auto_speed_next(void) {
+    mtbbus_auto_speed_timer = 0;
+    mtbbus_auto_speed_last++; // relies on continuous interval of speeds
+    if (mtbbus_auto_speed_last > MTBBUS_SPEED_MAX)
+        mtbbus_auto_speed_last = MTBBUS_SPEED_38400;
+    mtbbus_set_speed(mtbbus_auto_speed_last);
+}
+
+void mtbbus_auto_speed_received(void) {
+    mtbbus_auto_speed_in_progress = false;
+    config_mtbbus_speed = mtbbus_speed;
+    config_write = true;
+    gpio_pin_write(pin_led_blue, false);
+}
+
+void autodetect_mtbbus_speed_stop(void) {
+    if (mtbbus_auto_speed_in_progress) {
+        mtbbus_auto_speed_in_progress = false;
+        gpio_pin_write(pin_led_blue, false);
+    }
+}
+
+/* LEDs ----------------------------------------------------------------------*/
+
+void leds_update(void) {
+    if (led_gr_counter > 0) {
+        led_gr_counter--;
+        if (led_gr_counter == LED_GR_OFF)
+            gpio_pin_write(pin_led_green, false);
+    }
+
+    bool led_red_flashing = error_flags.all;
+
+    if (led_red_counter > 0) {
+        led_red_counter--;
+        if (((!led_red_flashing) && (led_red_counter == LED_RED_OK_OFF)) ||
+            ((led_red_flashing) && (led_red_counter == LED_RED_ERR_OFF)))
+            gpio_pin_write(pin_led_red, false);
+    }
+    if ((led_red_flashing) && (led_red_counter == 0)) {
+        led_red_counter = LED_RED_ERR_ON;
+        gpio_pin_write(pin_led_red, true);
+    }
+
+    if (led_blue_counter > 0) {
+        led_blue_counter--;
+        if (led_blue_counter == LED_BLUE_BEACON_OFF)
+            gpio_pin_write(pin_led_blue, false);
+    }
+    if ((beacon) && (led_blue_counter == 0)) {
+        led_blue_counter = LED_BLUE_BEACON_ON;
+        gpio_pin_write(pin_led_blue, true);
+    }
+}
+
+void led_red_ok(void) {
+    if (led_red_counter == 0) {
+        led_red_counter = LED_RED_OK_ON;
+        gpio_pin_write(pin_led_red, true);
+    }
 }
