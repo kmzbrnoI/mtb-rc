@@ -50,3 +50,4 @@ void gpio_pin_toggle(PinDef pin);
 
 static inline void gpio_uart_out(void) { gpio_pin_write(pin_mtbbus_te, true); }
 static inline void gpio_uart_in(void) { gpio_pin_write(pin_mtbbus_te, false); }
+uint8_t gpio_mtbbus_addr(void);

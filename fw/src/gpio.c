@@ -99,3 +99,11 @@ void gpio_pin_write(PinDef pin, bool value) {
 void gpio_pin_toggle(PinDef pin) {
     HAL_GPIO_TogglePin(pin.port, pin.pin);
 }
+
+uint8_t gpio_mtbbus_addr(void) {
+    uint8_t result = 0;
+    for (size_t i = 0; i < MTBBUS_ADDR_INPUTS; i++)
+        if (!gpio_pin_read(pins_addr[i]))
+            result |= (1 << i);
+    return result;
+}

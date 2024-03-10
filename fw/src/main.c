@@ -62,9 +62,9 @@ void init(void) {
 
     config_load();
 
-    //uint8_t _mtbbus_addr = io_get_addr_raw();
+    uint8_t _mtbbus_addr = gpio_mtbbus_addr();
     //error_flags.bits.addr_zero = (_mtbbus_addr == 0);
-    mtbbus_init(5, config_mtbbus_speed);
+    mtbbus_init(_mtbbus_addr, config_mtbbus_speed);
     mtbbus_on_receive = mtbbus_received;
 
     railcom_init();
@@ -255,7 +255,6 @@ void TIM1_IRQHandler(void) {
 // General-purpose TIM2 @ 10 ms
 void TIM2_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim2);
-    gpio_pin_toggle(pin_debug_1);
 }
 
 /* MTBbus --------------------------------------------------------------------*/
