@@ -11,6 +11,7 @@
 #define RC_BAUDRATE 250000
 #define RC_CH1_SIZE 2 // bytes
 #define RC_CH2_SIZE 5 // bytes
+#define RC_CUTOUT_TIMEOUT 1000 // us (uint16_t)
 
 /* Higher layers poll rlccdata, when ready_to_parse is true, higher layer can
  * read the data. Once reading is finished, higher layer sets ready_to_parse = false,
