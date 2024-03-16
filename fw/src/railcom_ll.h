@@ -8,10 +8,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define RC_UARTS_COUNT 2
 #define RC_BAUDRATE 250000
 #define RC_CH1_SIZE 2 // bytes
 #define RC_CH2_SIZE 5 // bytes
-#define RC_CUTOUT_TIMEOUT 1000 // us (uint16_t)
+
+#define RC_CUTOUT_TIMEOUT 600 // us (uint16_t)
+#define RC_CH1_MAX_LEN 185 // us
 
 /* Higher layers poll rlccdata, when ready_to_parse is true, higher layer can
  * read the data. Once reading is finished, higher layer sets ready_to_parse = false,
@@ -30,7 +33,7 @@ typedef struct {
     bool ready_to_parse;
 } RCLLData;
 
-extern volatile RCLLData rclldata;
+extern volatile RCLLData rclldata[RC_UARTS_COUNT];
 
 void railcom_ll_init(void);
 void railcom_ll_deinit(void);

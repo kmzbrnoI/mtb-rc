@@ -11,9 +11,10 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 TIM_HandleTypeDef htim4; // cutout length counter
 
-volatile RCLLData rclldata;
+volatile RCLLData rclldata[RC_UARTS_COUNT];
 volatile uint8_t uart1_input_byte;
 volatile uint8_t uart2_input_byte;
+volatile bool _rc_receiving = false;
 
 /* Private prototypes --------------------------------------------------------*/
 
@@ -38,9 +39,12 @@ void railcom_ll_init(void) {
     _rc2_init();
     _tim4_init();
 
-    rclldata.ready_to_parse = false;
-    rclldata.ch1.size = 0;
-    rclldata.ch2.size = 0;
+    for (size_t i = 0; i < RC_UARTS_COUNT; i++) {
+        rclldata[i].ready_to_parse = false;
+        rclldata[i].ch1.size = 0;
+        rclldata[i].ch2.size = 0;
+    }
+    _rc_receiving = false;
 }
 
 void _rc1_init(void) {
@@ -63,6 +67,9 @@ void _rc1_init(void) {
     HAL_NVIC_EnableIRQ(USART1_IRQn);
 
     assert_param(HAL_UART_RegisterCallback(&huart1, HAL_UART_RX_COMPLETE_CB_ID, _rcll_uart_rx_complete) == HAL_OK);
+
+    // Disable receiver till cutout
+    CLEAR_BIT(USART1->CR1, USART_CR1_RE);
 
     // Start first reading
     assert_param(HAL_UART_Receive_IT(&huart1, (uint8_t*)&uart1_input_byte, 1) == HAL_OK);
@@ -119,17 +126,35 @@ bool _is_cutout(void) {
 void cutout_start(void) {
     TIM4->CNT = 0;
     assert_param(HAL_TIM_Base_Start_IT(&htim4) == HAL_OK);
-    gpio_pin_write(pin_debug_1, true);
+    assert_param(!_rc_receiving);
+
+    if ((!rclldata[0].ready_to_parse) && (!rclldata[1].ready_to_parse)) {
+        _rc_receiving = true;
+        for (size_t i = 0; i < RC_UARTS_COUNT; i++) {
+            rclldata[i].ch1.size = 0;
+            rclldata[i].ch2.size = 0;
+        }
+    }
+
+    SET_BIT(USART1->CR1, USART_CR1_RE);
 }
 
 void cutout_end(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
-    gpio_pin_write(pin_debug_1, false);
+
+    for (size_t i = 0; i < RC_UARTS_COUNT; i++) {
+        if ((_rc_receiving) && ((rclldata[i].ch1.size > 0) || (rclldata[i].ch2.size > 0))) {
+            rclldata[i].ready_to_parse = true;
+        }
+    }
+    _rc_receiving = false;
+    CLEAR_BIT(USART1->CR1, USART_CR1_RE);
 }
 
 void cutout_timeout(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
-    gpio_pin_toggle(pin_debug_2);
+    _rc_receiving = false;
+    CLEAR_BIT(USART1->CR1, USART_CR1_RE);
 }
 
 uint16_t cutout_length_us(void) {
@@ -143,4 +168,27 @@ void USART1_IRQHandler(void) {
 }
 
 void _rcll_uart_rx_complete(UART_HandleTypeDef *huart) {
+    if (huart == &huart1)
+        assert_param(HAL_UART_Receive_IT(&huart1, (uint8_t*)&uart1_input_byte, 1) == HAL_OK);
+    if (huart == &huart2)
+        assert_param(HAL_UART_Receive_IT(&huart2, (uint8_t*)&uart2_input_byte, 1) == HAL_OK);
+
+    if (!_rc_receiving)
+        return;
+
+    volatile RCLLData* uartdata = (huart == &huart1) ? &rclldata[0] : &rclldata[1];
+
+    if (cutout_length_us() < RC_CH1_MAX_LEN) {
+        if (uartdata->ch1.size < RC_CH1_SIZE) {
+            gpio_pin_toggle(pin_debug_1);
+            uartdata->ch1.size++;
+            uartdata->ch1.buf[uartdata->ch1.size] = uart1_input_byte;
+        }
+    } else {
+        if (uartdata->ch2.size < RC_CH2_SIZE) {
+            gpio_pin_toggle(pin_debug_2);
+            uartdata->ch2.size++;
+            uartdata->ch2.buf[uartdata->ch2.size] = uart2_input_byte;
+        }
+    }
 }
