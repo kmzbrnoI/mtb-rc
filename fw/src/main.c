@@ -178,8 +178,6 @@ void init_clock(void) {
 }
 
 void init_tim1(void) {
-    TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-    TIM_MasterConfigTypeDef sMasterConfig = {0};
     //TIM_IC_InitTypeDef sConfigIC = {0};
 
     __HAL_RCC_TIM1_CLK_ENABLE();
@@ -192,18 +190,6 @@ void init_tim1(void) {
     htim1.Init.RepetitionCounter = 0;
     htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     assert_param(HAL_TIM_Base_Init(&htim1) == HAL_OK);
-
-    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
-    sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
-    sClockSourceConfig.ClockFilter = 0;
-    assert_param(HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) == HAL_OK);
-
-    //assert_param(HAL_TIM_IC_Init(&htim2) == HAL_OK);
-
-    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) == HAL_OK);
 
     /*sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
     sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
@@ -218,10 +204,6 @@ void init_tim1(void) {
 
 void init_tim2(void) {
     // General-purpose TIM2 @ 10 ms
-
-    TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-    TIM_MasterConfigTypeDef sMasterConfig = {0};
-
     __HAL_RCC_TIM2_CLK_ENABLE();
 
     htim2.Instance = TIM2;
@@ -232,13 +214,6 @@ void init_tim2(void) {
     htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     assert_param(HAL_TIM_Base_Init(&htim2) == HAL_OK);
 
-    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    assert_param(HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) == HAL_OK);
-
-    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) == HAL_OK);
-
     /* TIM2 interrupt Init */
     HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM2_IRQn);
@@ -248,10 +223,6 @@ void init_tim2(void) {
 
 void init_tim3(void) {
     // General-purpose TIM3 @ 500 us
-
-    TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-    TIM_MasterConfigTypeDef sMasterConfig = {0};
-
     __HAL_RCC_TIM3_CLK_ENABLE();
 
     htim3.Instance = TIM3;
@@ -261,13 +232,6 @@ void init_tim3(void) {
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     assert_param(HAL_TIM_Base_Init(&htim3) == HAL_OK);
-
-    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    assert_param(HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) == HAL_OK);
-
-    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    assert_param(HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) == HAL_OK);
 
     /* TIM3 interrupt Init */
     HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
