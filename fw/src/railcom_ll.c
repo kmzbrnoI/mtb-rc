@@ -201,7 +201,7 @@ void USART2_IRQHandler(void) {
 void _rcll_uart_rx_complete(UART_HandleTypeDef *huart) {
     if (huart == &huart1)
         assert_param(HAL_UART_Receive_IT(&huart1, (uint8_t*)&uart1_input_byte, 1) == HAL_OK);
-    if (huart == &huart2)
+    else
         assert_param(HAL_UART_Receive_IT(&huart2, (uint8_t*)&uart2_input_byte, 1) == HAL_OK);
 
     if (!_rc_receiving)
@@ -211,10 +211,10 @@ void _rcll_uart_rx_complete(UART_HandleTypeDef *huart) {
     const uint8_t received = (huart == &huart1) ? uart1_input_byte : uart2_input_byte;
 
     if ((cutout_length_us() < RC_CH1_MAX_LEN) && (uartdata->ch1.size < RC_CH1_SIZE)) {
-        uartdata->ch1.size++;
         uartdata->ch1.buf[uartdata->ch1.size] = received;
+        uartdata->ch1.size++;
     } else if (uartdata->ch2.size < RC_CH2_SIZE) {
-        uartdata->ch2.size++;
         uartdata->ch2.buf[uartdata->ch2.size] = received;
+        uartdata->ch2.size++;
     }
 }
