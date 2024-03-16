@@ -31,5 +31,5 @@ typedef struct {
 
 extern volatile RCLLData rclldata;
 
-void railcom_init(void);
-void railcom_deinit(void);
+void railcom_ll_init(void);
+void railcom_ll_deinit(void);

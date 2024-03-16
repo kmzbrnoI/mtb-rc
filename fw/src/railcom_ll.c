@@ -1,6 +1,6 @@
 /* RailCom reading implementation */
 
-#include "railcom.h"
+#include "railcom_ll.h"
 #include "assert.h"
 #include "stm32f1xx_hal.h"
 #include "gpio.h"
@@ -21,7 +21,7 @@ static inline bool _is_cutout(void);
 
 /* Implementation ------------------------------------------------------------*/
 
-void railcom_init(void) {
+void railcom_ll_init(void) {
     _rc1_init();
     _rc2_init();
 
@@ -84,7 +84,7 @@ void _rc2_init(void) {
     // TODO: add missing DMA
 }
 
-void railcom_deinit(void) {
+void railcom_ll_deinit(void) {
     __HAL_RCC_USART1_CLK_DISABLE();
     gpio_pin_deinit(pin_rc1);
     HAL_DMA_DeInit(huart1.hdmarx);
