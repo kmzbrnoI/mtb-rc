@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "mtbbus.h"
 #include "railcom_ll.h"
+#include "railcom_mw.h"
 #include "railcom_addrs.h"
 #include "config.h"
 #include "diag.h"
@@ -81,6 +82,7 @@ int main(void) {
 
     while (true) {
         mtbbus_update();
+        rcmw_update();
 
         if (btn_debounce_to_update) {
             btn_debounce_to_update = false;
@@ -144,6 +146,7 @@ void init(void) {
     mtbbus_update_polarity();
 
     railcom_ll_init();
+    rcmw_init();
     rca_init();
 
     HAL_Delay(200);

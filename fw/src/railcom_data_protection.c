@@ -1,9 +1,5 @@
 #include "railcom_data_protection.h"
 
-#define DECODER_NACK 0xFE
-#define DECODER_ACK 0xFD
-#define DECODER_BUSY 0xFC
-
 const uint8_t rc_data_decoder[256] = {
     0xFF, // 0 0b00000000
     0xFF, // 1 0b00000001

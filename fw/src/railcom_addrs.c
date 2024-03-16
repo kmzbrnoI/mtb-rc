@@ -13,14 +13,15 @@ bool rc_tracks_changed = false;
 /* Implementation ------------------------------------------------------------*/
 
 void rca_init(void) {
-    rca_remove_all();
+    for (size_t i = 0; i < RC_TRACKS_COUNT; i++)
+        rc_tracks[i].count = 0;
     rc_tracks_changed = false;
 }
 
 void rca_update_100ms(void) {
     for (size_t track = 0; track < RC_TRACKS_COUNT; track++) {
         if (rc_tracks[track].count > 0) {
-            for (size_t i = rc_tracks[track].count-1; i > 0; i--) {
+            for (int i = rc_tracks[track].count-1; i >= 0; i--) {
                 rc_tracks[track].addrs[i].timeout--;
                 if (rc_tracks[track].addrs[i].timeout == 0)
                     rca_remove_i(track, i);
@@ -46,7 +47,7 @@ void rca_add_or_update(size_t track, uint16_t addr) {
 
 bool rca_full(size_t track) {
     assert_param(track < RC_TRACKS_COUNT);
-    return rc_tracks[track].count < RC_ADDS_MAX_IN_TRACK;
+    return rc_tracks[track].count >= RC_ADDS_MAX_IN_TRACK;
 }
 
 void rca_remove(size_t track, uint16_t addr) {

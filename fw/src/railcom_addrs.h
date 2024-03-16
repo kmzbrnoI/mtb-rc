@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 // after this timeout the detected address will be marked as inactive
-#define RC_ADDR_TIMEOUT 50 // in 100ms
+#define RC_ADDR_TIMEOUT 20 // in 100ms
 #define RC_TRACKS_COUNT 8
 #define RC_ADDS_MAX_IN_TRACK 8 // maximum number of addresses detected in track
 
