@@ -62,6 +62,12 @@ void gpio_init(void) {
 
     gpio_pin_init(pin_btn, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
     gpio_pin_init(pin_dcc, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
+
+    gpio_pin_init(pin_cutout, GPIO_MODE_IT_RISING_FALLING, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
+
+    /* EXTI interrupt init*/
+    HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 }
 
 void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
@@ -107,3 +113,15 @@ uint8_t gpio_mtbbus_addr(void) {
             result |= (1 << i);
     return result;
 }
+
+void EXTI4_IRQHandler(void) {
+    // HAL_GPIO_EXTI_IRQHandler for all pins with active EXTI4 should be called
+    HAL_GPIO_EXTI_IRQHandler(pin_cutout.pin);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t gpioPin) {
+    if (gpioPin == pin_cutout.pin)
+        gpio_on_cutout_change();
+}
+
+__weak void gpio_on_cutout_change(void) {}

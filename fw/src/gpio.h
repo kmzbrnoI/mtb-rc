@@ -46,6 +46,9 @@ bool gpio_pin_read(PinDef pin);
 void gpio_pin_write(PinDef pin, bool value);
 void gpio_pin_toggle(PinDef pin);
 
+// events
+void gpio_on_cutout_change(void);
+
 /* Higher-level functions ----------------------------------------------------*/
 
 static inline void gpio_uart_out(void) { gpio_pin_write(pin_mtbbus_te, true); }

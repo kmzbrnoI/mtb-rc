@@ -11,21 +11,28 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart1_rx;
 
+volatile RCLLData rclldata;
+
 /* Private prototypes --------------------------------------------------------*/
 
-static void rc1_init(void);
-static void rc2_init(void);
+static void _rc1_init(void);
+static void _rc2_init(void);
+static inline bool _is_cutout(void);
 
 /* Implementation ------------------------------------------------------------*/
 
 void railcom_init(void) {
-    rc1_init();
-    rc2_init();
+    _rc1_init();
+    _rc2_init();
+
+    rclldata.ready_to_parse = false;
+    rclldata.ch1.size = 0;
+    rclldata.ch2.size = 0;
 }
 
-void rc1_init(void) {
+void _rc1_init(void) {
     huart1.Instance = USART1;
-    huart1.Init.BaudRate = 250000;
+    huart1.Init.BaudRate = RC_BAUDRATE;
     huart1.Init.WordLength = UART_WORDLENGTH_8B;
     huart1.Init.StopBits = UART_STOPBITS_1;
     huart1.Init.Parity = UART_PARITY_NONE;
@@ -59,9 +66,9 @@ void rc1_init(void) {
     HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 
-void rc2_init(void) {
+void _rc2_init(void) {
     huart2.Instance = USART2;
-    huart2.Init.BaudRate = 115200;
+    huart2.Init.BaudRate = RC_BAUDRATE;
     huart2.Init.WordLength = UART_WORDLENGTH_8B;
     huart2.Init.StopBits = UART_STOPBITS_1;
     huart2.Init.Parity = UART_PARITY_NONE;
@@ -94,4 +101,12 @@ void USART1_IRQHandler(void) {
 
 void DMA1_Channel5_IRQHandler(void) {
     HAL_DMA_IRQHandler(&hdma_usart1_rx);
+}
+
+bool _is_cutout(void) {
+    return !gpio_pin_read(pin_cutout);
+}
+
+void gpio_on_cutout_change(void) {
+    gpio_pin_toggle(pin_debug_1);
 }

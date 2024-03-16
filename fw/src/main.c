@@ -369,7 +369,6 @@ void TIM2_IRQHandler(void) {
 // General-purpose TIM3 @ 500 us
 void TIM3_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim3);
-    gpio_pin_toggle(pin_debug_1);
     btn_debounce_to_update = true;
 }
 
