@@ -23,6 +23,7 @@ typedef struct {
 } RCTrack;
 
 extern RCTrack rc_tracks[RC_TRACKS_COUNT];
+extern bool rc_tracks_changed;
 
 void rca_init(void);
 void rca_update_100ms(void);

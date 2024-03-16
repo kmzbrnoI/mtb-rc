@@ -46,6 +46,7 @@ volatile MtbBusSpeed mtbbus_auto_speed_last;
 #define MTBBUS_AUTO_SPEED_TIMEOUT 20 // 200 ms
 
 volatile bool t2_elapsed = false;
+volatile bool rca_update = false;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -102,6 +103,11 @@ int main(void) {
         if (t2_elapsed) {
             t2_elapsed = false;
             leds_update();
+        }
+
+        if (rca_update) {
+            rca_update = false;
+            rca_update_100ms();
         }
     }
 }
@@ -330,6 +336,13 @@ void TIM2_IRQHandler(void) {
 
     if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer < MTBBUS_AUTO_SPEED_TIMEOUT))
         mtbbus_auto_speed_timer++;
+
+    static size_t rca_update_counter = 0;
+    rca_update_counter++;
+    if (rca_update_counter >= 10) { // 100 ms
+        rca_update = true;
+        rca_update_counter = 0;
+    }
 }
 
 // General-purpose TIM3 @ 500 us
@@ -359,11 +372,20 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
 
     case MTBBUS_CMD_MOSI_MODULE_INQUIRY:
         if ((!broadcast) && (data_len >= 1)) {
-            //static bool last_input_changed = false;
-            //static bool last_diag_changed = false;
-            //static bool first_scan = true;
-            //bool last_ok = data[0] & 0x01;
-            mtbbus_send_ack();
+            static bool last_input_changed = false;
+            static bool first_scan = true;
+            bool last_ok = data[0] & 0x01;
+
+            if ((rc_tracks_changed) || (first_scan) || (last_input_changed && !last_ok)) {
+                last_input_changed = true;
+                first_scan = false;
+                rc_tracks_changed = false;
+                mtbbus_send_inputs(MTBBUS_CMD_MISO_INPUT_CHANGED);
+            } else {
+                last_input_changed = false;
+                mtbbus_send_ack();
+            }
+
         } else { goto INVALID_MSG; }
         break;
 
@@ -476,9 +498,19 @@ void mtbbus_send_ack(void) {
 }
 
 void mtbbus_send_inputs(uint8_t message_code) {
-    mtbbus_output_buf[0] = 2;
     mtbbus_output_buf[1] = message_code;
-    mtbbus_output_buf[2] = 0; // TODO
+
+    size_t i = 2;
+    for (size_t track = 0; track < RC_TRACKS_COUNT; track++) {
+        for (size_t addri = 0; addri < rc_tracks[track].count; addri++) {
+            if (i < MTBBUS_MAX_INPUT_BYTES) {
+                const uint16_t addr = rc_tracks[track].addrs[addri].addr;
+                mtbbus_output_buf[i++] = ((addr >> 8) & 0x1F) | (track << 5);
+                mtbbus_output_buf[i++] = addr & 0xFF;
+            }
+        }
+    }
+    mtbbus_output_buf[0] = i-1; // length
     mtbbus_send_buf_autolen();
 }
 
