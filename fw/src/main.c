@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "mtbbus.h"
 #include "railcom_ll.h"
+#include "railcom_addrs.h"
 #include "config.h"
 #include "diag.h"
 #include "inputs.h"
@@ -137,6 +138,7 @@ void init(void) {
     mtbbus_update_polarity();
 
     railcom_ll_init();
+    rca_init();
 
     HAL_Delay(200);
 
