@@ -47,7 +47,7 @@ volatile MtbBusSpeed mtbbus_auto_speed_last;
 #define MTBBUS_AUTO_SPEED_TIMEOUT 20 // 200 ms
 
 volatile bool t2_elapsed = false;
-volatile bool rca_update = false;
+volatile bool elapsed_100ms = false;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -107,9 +107,10 @@ int main(void) {
             leds_update();
         }
 
-        if (rca_update) {
-            rca_update = false;
+        if (elapsed_100ms) {
+            elapsed_100ms = false;
             rca_update_100ms();
+            rcmw_mux_to_change(); // change RailCom multiplexing each 100 ms
         }
     }
 }
@@ -340,11 +341,11 @@ void TIM2_IRQHandler(void) {
     if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer < MTBBUS_AUTO_SPEED_TIMEOUT))
         mtbbus_auto_speed_timer++;
 
-    static size_t rca_update_counter = 0;
-    rca_update_counter++;
-    if (rca_update_counter >= 10) { // 100 ms
-        rca_update = true;
-        rca_update_counter = 0;
+    static size_t counter_100ms = 0;
+    counter_100ms++;
+    if (counter_100ms >= 10) { // 100 ms
+        elapsed_100ms = true;
+        counter_100ms = 0;
     }
 }
 

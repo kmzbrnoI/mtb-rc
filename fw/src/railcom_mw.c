@@ -4,11 +4,13 @@
 #include "assert.h"
 #include "railcom_ll.h"
 #include "railcom_data_protection.h"
+#include "gpio.h"
 
 /* Local variables -----------------------------------------------------------*/
 
 size_t rc_mux = 0; // multiplexer range: 0, 1, 2, 3
 RCCh1Buf ch1[RC_TRACKS_COUNT];
+bool mux_to_change = false;
 
 /* Private prototypes --------------------------------------------------------*/
 
@@ -16,18 +18,29 @@ static void _parse_ch1(size_t track, uint8_t buf[], size_t size);
 static void _poll_ll(void);
 static void _update_ch1_addrs(size_t track);
 static uint16_t addr_decode(uint8_t addr1, uint8_t addr2);
+static void _mux_apply(void);
+static void _mux_change(void);
 
 /* Implementation ------------------------------------------------------------*/
+
+/* Address detection ---------------------------------------------------------*/
 
 void rcmw_init(void) {
     for (size_t i = 0; i < RC_TRACKS_COUNT; i++) {
         ch1[i].addr1_received_count = 0;
         ch1[i].addr2_received_count = 0;
     }
+    rc_mux = 0;
+    _mux_apply();
+    mux_to_change = false;
 }
 
 void rcmw_update(void) {
     _poll_ll();
+    if ((mux_to_change) && (!rc_receiving)) {
+        mux_to_change = false;
+        _mux_change();
+    }
 }
 
 void _poll_ll(void) {
@@ -88,4 +101,20 @@ void _update_ch1_addrs(size_t track) {
 uint16_t addr_decode(uint8_t addr1, uint8_t addr2) {
     // See RailCom specification, chapter 5.2 ADR
     return ((addr1 >> 7) == 0) ? addr2 : (((uint16_t)(addr1 & 0x3F)) << 8) | addr2;
+}
+
+/* Mutliplexing --------------------------------------------------------------*/
+
+void rcmw_mux_to_change(void) {
+    mux_to_change = true;
+}
+
+void _mux_apply(void) {
+    gpio_pin_write(pin_mult1, rc_mux&1);
+    gpio_pin_write(pin_mult2, rc_mux&2);
+}
+
+void _mux_change(void) {
+    rc_mux = (rc_mux+1) % 4;
+    _mux_apply();
 }

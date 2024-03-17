@@ -34,6 +34,9 @@ typedef struct {
 } RCLLData;
 
 extern volatile RCLLData rclldata[RC_UARTS_COUNT];
+extern volatile bool rc_receiving;
 
 void railcom_ll_init(void);
 void railcom_ll_deinit(void);
+
+bool is_cutout(void);

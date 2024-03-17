@@ -18,7 +18,9 @@
 // as valid.
 // Each received byte revalidating the address causes calling of rca_add_or_update.
 
-#define CH1_RELIAB_THRSHD 5
+// One DCC packet: ~ 8 ms (tested on Honza's DR5000)
+
+#define CH1_RELIAB_THRSHD 3
 
 typedef struct {
     uint8_t addr1;
@@ -31,6 +33,7 @@ extern RCCh1Buf ch1[RC_TRACKS_COUNT];
 
 void rcmw_init(void);
 void rcmw_update(void);
+void rcmw_mux_to_change(void);
 
 #define RC_APP_ID_ADR_LOW 1
 #define RC_APP_ID_ADR_HIGH 2

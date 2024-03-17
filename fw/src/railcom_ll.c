@@ -14,14 +14,13 @@ TIM_HandleTypeDef htim4; // cutout length counter
 volatile RCLLData rclldata[RC_UARTS_COUNT];
 volatile uint8_t uart1_input_byte;
 volatile uint8_t uart2_input_byte;
-volatile bool _rc_receiving = false;
+volatile bool rc_receiving = false;
 
 /* Private prototypes --------------------------------------------------------*/
 
 static void _rc1_init(void);
 static void _rc2_init(void);
 static void _tim4_init(void);
-static inline bool _is_cutout(void);
 
 void _rcll_uart_rx_complete(UART_HandleTypeDef *huart);
 
@@ -44,7 +43,7 @@ void railcom_ll_init(void) {
         rclldata[i].ch1.size = 0;
         rclldata[i].ch2.size = 0;
     }
-    _rc_receiving = false;
+    rc_receiving = false;
 }
 
 void _rc1_init(void) {
@@ -139,23 +138,23 @@ void TIM4_IRQHandler(void) {
 }
 
 void gpio_on_cutout_change(void) {
-    if (_is_cutout())
+    if (is_cutout())
         cutout_start();
     else
         cutout_end();
 }
 
-bool _is_cutout(void) {
+bool is_cutout(void) {
     return gpio_pin_read(pin_cutout);
 }
 
 void cutout_start(void) {
     TIM4->CNT = 0;
     assert_param(HAL_TIM_Base_Start_IT(&htim4) == HAL_OK);
-    assert_param(!_rc_receiving);
+    assert_param(!rc_receiving);
 
     if ((!rclldata[0].ready_to_parse) && (!rclldata[1].ready_to_parse)) {
-        _rc_receiving = true;
+        rc_receiving = true;
         for (size_t i = 0; i < RC_UARTS_COUNT; i++) {
             rclldata[i].ch1.size = 0;
             rclldata[i].ch2.size = 0;
@@ -170,16 +169,16 @@ void cutout_end(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
 
     for (size_t i = 0; i < RC_UARTS_COUNT; i++)
-        if ((_rc_receiving) && ((rclldata[i].ch1.size > 0) || (rclldata[i].ch2.size > 0)))
+        if ((rc_receiving) && ((rclldata[i].ch1.size > 0) || (rclldata[i].ch2.size > 0)))
             rclldata[i].ready_to_parse = true;
-    _rc_receiving = false;
+    rc_receiving = false;
     CLEAR_BIT(USART1->CR1, USART_CR1_RE);
     CLEAR_BIT(USART2->CR1, USART_CR1_RE);
 }
 
 void cutout_timeout(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
-    _rc_receiving = false;
+    rc_receiving = false;
     CLEAR_BIT(USART1->CR1, USART_CR1_RE);
     CLEAR_BIT(USART2->CR1, USART_CR1_RE);
 }
@@ -204,7 +203,7 @@ void _rcll_uart_rx_complete(UART_HandleTypeDef *huart) {
     else
         assert_param(HAL_UART_Receive_IT(&huart2, (uint8_t*)&uart2_input_byte, 1) == HAL_OK);
 
-    if (!_rc_receiving)
+    if (!rc_receiving)
         return;
 
     volatile RCLLData* uartdata = (huart == &huart1) ? &rclldata[0] : &rclldata[1];
