@@ -48,6 +48,7 @@ void gpio_pin_toggle(PinDef pin);
 
 // events
 void gpio_on_cutout_change(void);
+void gpio_on_dcc_fall(void);
 
 /* Higher-level functions ----------------------------------------------------*/
 

@@ -13,7 +13,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2; // general-purpose @ 10 ms
 TIM_HandleTypeDef htim3; // general-purpose @ 500 us
 
@@ -53,7 +52,6 @@ volatile bool elapsed_100ms = false;
 
 static void init(void);
 static void init_clock(void);
-static void init_tim1(void);
 static void init_tim2(void);
 static void init_tim3(void);
 
@@ -134,7 +132,6 @@ void init(void) {
     gpio_pin_write(pin_led_green, true);
     gpio_pin_write(pin_led_blue, true);
 
-    //init_tim1();
     init_tim2();
     init_tim3();
 
@@ -187,31 +184,6 @@ void init_clock(void) {
     /** Enables the Clock Security System
     */
     HAL_RCC_EnableCSS();
-}
-
-void init_tim1(void) {
-    //TIM_IC_InitTypeDef sConfigIC = {0};
-
-    __HAL_RCC_TIM1_CLK_ENABLE();
-
-    htim1.Instance = TIM1;
-    htim1.Init.Prescaler = 0;
-    htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim1.Init.Period = 65535;
-    htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim1.Init.RepetitionCounter = 0;
-    htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    assert_param(HAL_TIM_Base_Init(&htim1) == HAL_OK);
-
-    /*sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
-    sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-    sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-    sConfigIC.ICFilter = 0;
-    assert_param(HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) == HAL_OK);*/
-
-    /* TIM1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM1_CC_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
 }
 
 void init_tim2(void) {
@@ -321,11 +293,6 @@ void assert_failed(uint8_t *file, uint32_t line) {
 #endif /* USE_FULL_ASSERT */
 
 /* "Application" code --------------------------------------------------------*/
-
-// TIM1 global interrupt
-void TIM1_IRQHandler(void) {
-    HAL_TIM_IRQHandler(&htim1);
-}
 
 // General-purpose TIM2 @ 10 ms
 void TIM2_IRQHandler(void) {

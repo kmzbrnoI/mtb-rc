@@ -29,6 +29,7 @@ C_SOURCES = \
 	lib/dwt_delay/dwt_delay.c \
 	$(wildcard src/mtbbus/*.c) \
 	$(wildcard src/railcom/*.c) \
+	$(wildcard src/dcc/*.c) \
 	$(wildcard src/*.c)
 
 # ASM sources
@@ -72,6 +73,7 @@ C_INCLUDES = \
 	-Ilib/dwt_delay \
 	-I src \
 	-I src/mtbbus \
+	-I src/dcc \
 	-I src/railcom
 
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -pedantic -std=c99 -fdata-sections -ffunction-sections
