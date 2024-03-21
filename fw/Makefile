@@ -28,6 +28,7 @@ C_SOURCES = \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_uart.c \
 	lib/dwt_delay/dwt_delay.c \
 	$(wildcard src/mtbbus/*.c) \
+	$(wildcard src/railcom/*.c) \
 	$(wildcard src/*.c)
 
 # ASM sources
@@ -70,7 +71,8 @@ C_INCLUDES = \
 	-I$(STM32_DRIVERS_PATH)/CMSIS/Include \
 	-Ilib/dwt_delay \
 	-I src \
-	-I src/mtbbus
+	-I src/mtbbus \
+	-I src/railcom
 
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -pedantic -std=c99 -fdata-sections -ffunction-sections
 CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -pedantic -std=c99 -fdata-sections -ffunction-sections
