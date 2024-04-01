@@ -5,6 +5,7 @@
 #include "railcom_ll.h"
 #include "railcom_data_protection.h"
 #include "gpio.h"
+#include "dcc_mw.h"
 
 /* Local variables -----------------------------------------------------------*/
 
@@ -15,6 +16,7 @@ bool mux_to_change = false;
 /* Private prototypes --------------------------------------------------------*/
 
 static void _parse_ch1(size_t track, uint8_t buf[], size_t size);
+static void _parse_ch2(size_t track, uint8_t buf[], size_t size);
 static void _poll_ll(void);
 static void _update_ch1_addrs(size_t track);
 static uint16_t addr_decode(uint8_t addr1, uint8_t addr2);
@@ -48,6 +50,7 @@ void _poll_ll(void) {
         if (rclldata[i].ready_to_parse) {
             const size_t track = 4*i + rc_mux;
             _parse_ch1(track, (uint8_t*)rclldata[i].ch1.buf, rclldata[i].ch1.size);
+            _parse_ch2(track, (uint8_t*)rclldata[i].ch2.buf, rclldata[i].ch2.size);
             rclldata[i].ready_to_parse = false;
             _update_ch1_addrs(track);
         }
@@ -101,6 +104,21 @@ void _update_ch1_addrs(size_t track) {
 uint16_t addr_decode(uint8_t addr1, uint8_t addr2) {
     // See RailCom specification, chapter 5.2 ADR
     return ((addr1 >> 7) == 0) ? addr2 : (((uint16_t)(addr1 & 0x3F)) << 8) | addr2;
+}
+
+void _parse_ch2(size_t track, uint8_t buf[], size_t size) {
+    if (size < 1)
+        return;
+
+    // consider answer valid iff decoding of all bytes is successful
+    for (unsigned i = 0; i < size; i++) {
+        if (rc_data_decoder[buf[i]] > DECODER_NUMBER_MAX) {
+            return; // invalid; TODO: maybe report error somehow?
+        }
+    }
+
+    if (dcc_addr_valid())
+        rca_add_or_update(track, dcc_last_address);
 }
 
 /* Mutliplexing --------------------------------------------------------------*/

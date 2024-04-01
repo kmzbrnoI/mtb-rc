@@ -11,6 +11,7 @@
 #include "diag.h"
 #include "inputs.h"
 #include "dcc_ll.h"
+#include "dcc_mw.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -82,6 +83,7 @@ int main(void) {
         mtbbus_update();
         rcmw_update();
         dcc_ll_update();
+        dcc_mw_update();
 
         if (btn_debounce_to_update) {
             btn_debounce_to_update = false;
@@ -147,6 +149,7 @@ void init(void) {
     rcmw_init();
     rca_init();
     dcc_ll_init();
+    dcc_mw_init();
 
     HAL_Delay(200);
 
@@ -280,6 +283,8 @@ void assert_failed(uint8_t *file, uint32_t line) {
 void TIM3_IRQHandler(void) {
     HAL_TIM_IRQHandler(&htim3);
     btn_debounce_to_update = true;
+    if (dcc_time_since_address < DCC_TIME_SINCE_ADDRESS_MAX)
+        dcc_time_since_address++;
 
     static unsigned tim_10ms = 0;
     tim_10ms++;
