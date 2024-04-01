@@ -13,7 +13,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-TIM_HandleTypeDef htim2; // general-purpose @ 10 ms
 TIM_HandleTypeDef htim3; // general-purpose @ 500 us
 
 #define LED_GR_ON 5
@@ -45,15 +44,15 @@ volatile uint8_t mtbbus_auto_speed_timer = 0;
 volatile MtbBusSpeed mtbbus_auto_speed_last;
 #define MTBBUS_AUTO_SPEED_TIMEOUT 20 // 200 ms
 
-volatile bool t2_elapsed = false;
+volatile bool elapsed_10ms = false;
 volatile bool elapsed_100ms = false;
 
 /* Private function prototypes -----------------------------------------------*/
 
 static void init(void);
 static void init_clock(void);
-static void init_tim2(void);
 static void init_tim3(void);
+static void timer_10ms(void);
 
 void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len); // intentionally not static
 static void mtbbus_send_ack(void);
@@ -100,8 +99,8 @@ int main(void) {
         if ((mtbbus_auto_speed_in_progress) && (mtbbus_auto_speed_timer == MTBBUS_AUTO_SPEED_TIMEOUT))
             mtbbus_auto_speed_next();
 
-        if (t2_elapsed) {
-            t2_elapsed = false;
+        if (elapsed_10ms) {
+            elapsed_10ms = false;
             leds_update();
         }
 
@@ -132,7 +131,6 @@ void init(void) {
     gpio_pin_write(pin_led_green, true);
     gpio_pin_write(pin_led_blue, true);
 
-    init_tim2();
     init_tim3();
 
     config_load();
@@ -184,25 +182,6 @@ void init_clock(void) {
     /** Enables the Clock Security System
     */
     HAL_RCC_EnableCSS();
-}
-
-void init_tim2(void) {
-    // General-purpose TIM2 @ 10 ms
-    __HAL_RCC_TIM2_CLK_ENABLE();
-
-    htim2.Instance = TIM2;
-    htim2.Init.Prescaler = 100;
-    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim2.Init.Period = 4800;
-    htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    assert_param(HAL_TIM_Base_Init(&htim2) == HAL_OK);
-
-    /* TIM2 interrupt Init */
-    HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM2_IRQn);
-
-    HAL_TIM_Base_Start_IT(&htim2);
 }
 
 void init_tim3(void) {
@@ -294,10 +273,21 @@ void assert_failed(uint8_t *file, uint32_t line) {
 
 /* "Application" code --------------------------------------------------------*/
 
-// General-purpose TIM2 @ 10 ms
-void TIM2_IRQHandler(void) {
-    HAL_TIM_IRQHandler(&htim2);
-    t2_elapsed = true;
+// General-purpose TIM3 @ 500 us
+void TIM3_IRQHandler(void) {
+    HAL_TIM_IRQHandler(&htim3);
+    btn_debounce_to_update = true;
+
+    static unsigned tim_10ms = 0;
+    tim_10ms++;
+    if (tim_10ms >= 20) {
+        tim_10ms = 0;
+        timer_10ms();
+    }
+}
+
+void timer_10ms(void) {
+    elapsed_10ms = true;
 
     if (mtbbus_timeout < MTBBUS_TIMEOUT_MAX)
         mtbbus_timeout++;
@@ -314,12 +304,6 @@ void TIM2_IRQHandler(void) {
         elapsed_100ms = true;
         counter_100ms = 0;
     }
-}
-
-// General-purpose TIM3 @ 500 us
-void TIM3_IRQHandler(void) {
-    HAL_TIM_IRQHandler(&htim3);
-    btn_debounce_to_update = true;
 }
 
 /* MTBbus --------------------------------------------------------------------*/

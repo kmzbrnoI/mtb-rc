@@ -134,5 +134,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpioPin) {
         fail();
 }
 
+void gpio_dcc_enable_fall_irq(void) {
+    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void gpio_dcc_disable_fall_irq(void) {
+    HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+}
+
 __weak void gpio_on_cutout_change(void) {}
 __weak void gpio_on_dcc_fall(void) {}

@@ -50,6 +50,9 @@ void gpio_pin_toggle(PinDef pin);
 void gpio_on_cutout_change(void);
 void gpio_on_dcc_fall(void);
 
+void gpio_dcc_enable_fall_irq(void);
+void gpio_dcc_disable_fall_irq(void);
+
 /* Higher-level functions ----------------------------------------------------*/
 
 static inline void gpio_uart_out(void) { gpio_pin_write(pin_mtbbus_te, true); }
