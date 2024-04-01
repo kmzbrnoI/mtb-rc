@@ -66,7 +66,7 @@ void gpio_init(void) {
 
     /* EXTIs interrupts init*/
     HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+    // not enabling EXTI0 yet -> enable in dcc_ll.c
     HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 }
@@ -135,10 +135,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpioPin) {
 }
 
 void gpio_dcc_enable_fall_irq(void) {
+    // Enables whole EXTI0 - must be refactorred if more interrupts on EXTI0 desirable!
     HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 void gpio_dcc_disable_fall_irq(void) {
+    // Disables whole EXTI0 - must be refactorred if more interrupts on EXTI0 desirable!
     HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 }
 
