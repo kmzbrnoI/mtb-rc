@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <string.h>
 #include "dwt_delay.h"
 #include "assert.h"
 #include "main.h"
@@ -495,17 +496,17 @@ void mtbbus_send_diag_value(uint8_t i) {
     mtbbus_output_buf[2] = i;
 
     switch (i) {
-    case MTBBUS_DV_VERSION:
+    case dvVersion:
         mtbbus_output_buf[0] = 2+1;
         mtbbus_output_buf[3] = 0x10;
         break;
 
-    case MTBBUS_DV_STATE:
+    case dvState:
         mtbbus_output_buf[0] = 2+1;
         mtbbus_output_buf[3] = (mtbbus_warn_flags.all > 0) << 1;
         break;
 
-    case MTBBUS_DV_UPTIME:
+    case dvUptime:
         mtbbus_output_buf[0] = 2+4;
         mtbbus_output_buf[3] = (uptime_seconds >> 24);
         mtbbus_output_buf[4] = (uptime_seconds >> 16) & 0xFF;
@@ -513,7 +514,7 @@ void mtbbus_send_diag_value(uint8_t i) {
         mtbbus_output_buf[6] = (uptime_seconds) & 0xFF;
         break;
 
-    case MTBBUS_DV_WARNINGS:
+    case dvWarnings:
         mtbbus_warn_flags_old = mtbbus_warn_flags;
         mtbbus_output_buf[0] = 2+1;
         mtbbus_output_buf[3] = mtbbus_warn_flags.all;

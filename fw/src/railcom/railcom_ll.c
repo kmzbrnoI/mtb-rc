@@ -4,6 +4,7 @@
 #include "assert.h"
 #include "stm32f1xx_hal.h"
 #include "gpio.h"
+#include <string.h>
 
 /* Local variables -----------------------------------------------------------*/
 
@@ -15,6 +16,7 @@ volatile RCLLData rclldata[RC_UARTS_COUNT];
 volatile uint8_t uart1_input_byte;
 volatile uint8_t uart2_input_byte;
 volatile bool rc_receiving = false;
+volatile RCLLDiag rc_ll_diag;
 
 /* Private prototypes --------------------------------------------------------*/
 
@@ -44,6 +46,8 @@ void railcom_ll_init(void) {
         rclldata[i].ch2.size = 0;
     }
     rc_receiving = false;
+
+    memset((void*)&rc_ll_diag, 0, sizeof(RCLLDiag));
 }
 
 void _rc1_init(void) {
@@ -159,7 +163,11 @@ void cutout_start(void) {
             rclldata[i].ch1.size = 0;
             rclldata[i].ch2.size = 0;
         }
+    } else {
+        rc_ll_diag.cutouts_no_ready_to_parse++;
     }
+
+    rc_ll_diag.cutouts_started++;
 
     SET_BIT(USART1->CR1, USART_CR1_RE);
     SET_BIT(USART2->CR1, USART_CR1_RE);
@@ -168,10 +176,18 @@ void cutout_start(void) {
 void cutout_end(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
 
-    for (size_t i = 0; i < RC_UARTS_COUNT; i++)
-        if ((rc_receiving) && ((rclldata[i].ch1.size > 0) || (rclldata[i].ch2.size > 0)))
+    for (size_t i = 0; i < RC_UARTS_COUNT; i++) {
+        if ((rc_receiving) && (rclldata[i].ch1.size > 0)) {
             rclldata[i].ready_to_parse = true;
+            rc_ll_diag.cutouts_data_ch1++;
+        }
+        if ((rc_receiving) && (rclldata[i].ch2.size > 0)) {
+            rclldata[i].ready_to_parse = true;
+            rc_ll_diag.cutouts_data_ch2++;
+        }
+    }
     rc_receiving = false;
+    rc_ll_diag.cutouts_finished++;
     CLEAR_BIT(USART1->CR1, USART_CR1_RE);
     CLEAR_BIT(USART2->CR1, USART_CR1_RE);
 }
@@ -179,6 +195,7 @@ void cutout_end(void) {
 void cutout_timeout(void) {
     assert_param(HAL_TIM_Base_Stop(&htim4) == HAL_OK);
     rc_receiving = false;
+    rc_ll_diag.cutouts_timeout++;
     CLEAR_BIT(USART1->CR1, USART_CR1_RE);
     CLEAR_BIT(USART2->CR1, USART_CR1_RE);
 }
