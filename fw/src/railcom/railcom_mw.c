@@ -73,8 +73,7 @@ void _parse_ch1(size_t track, uint8_t buf[], size_t size) {
 
     switch (id) {
         case RC_APP_ID_ADR_LOW:
-            if (ch1[track].addr1 == data)
-            {
+            if (ch1[track].addr1 == data) {
                 if (ch1[track].addr1_received_count < CH1_RELIAB_THRSHD)
                     ch1[track].addr1_received_count++;
             } else {
@@ -84,8 +83,7 @@ void _parse_ch1(size_t track, uint8_t buf[], size_t size) {
             break;
 
         case RC_APP_ID_ADR_HIGH:
-            if (ch1[track].addr2 == data)
-            {
+            if (ch1[track].addr2 == data) {
                 if (ch1[track].addr2_received_count < CH1_RELIAB_THRSHD)
                     ch1[track].addr2_received_count++;
             } else {
@@ -121,7 +119,7 @@ void _parse_ch2(size_t track, uint8_t buf[], size_t size) {
         rca_add_or_update(track, dcc_last_address);
 }
 
-/* Mutliplexing --------------------------------------------------------------*/
+/* Multiplexing --------------------------------------------------------------*/
 
 void rcmw_mux_to_change(void) {
     mux_to_change = true;
