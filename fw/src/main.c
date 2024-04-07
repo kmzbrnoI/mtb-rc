@@ -62,6 +62,7 @@ static void mtbbus_send_inputs(uint8_t message_code);
 static void mtbbus_send_error(uint8_t code);
 static void mtbbus_update_polarity(void);
 static inline bool mtbbus_addressed(void);
+static void mtbbus_send_diag_value(uint8_t i);
 
 static void autodetect_mtbbus_speed(void);
 static void autodetect_mtbbus_speed_stop(void);
@@ -111,6 +112,7 @@ int main(void) {
         if (elapsed_100ms) {
             elapsed_100ms = false;
             rca_update_100ms();
+            diag_update();
             rcmw_mux_to_change(); // change RailCom multiplexing each 100 ms
         }
     }
@@ -436,11 +438,11 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
         }
         break;
 
-/*    case MTBBUS_CMD_MOSI_DIAG_VALUE_REQ:
+    case MTBBUS_CMD_MOSI_DIAG_VALUE_REQ:
         if (data_len >= 1) {
-            send_diag_value(data[0]);
+            mtbbus_send_diag_value(data[0]);
         } else { goto INVALID_MSG; }
-        break; */
+        break;
 
 INVALID_MSG:
     default:
@@ -486,6 +488,43 @@ void mtbbus_send_error(uint8_t code) {
 
 void mtbbus_update_polarity(void) {
     error_flags.bits.bad_mtbbus_polarity = !gpio_pin_read(pin_mtbbus_rx);
+}
+
+void mtbbus_send_diag_value(uint8_t i) {
+    mtbbus_output_buf[1] = MTBBUS_CMD_MISO_DIAG_VALUE;
+    mtbbus_output_buf[2] = i;
+
+    switch (i) {
+    case MTBBUS_DV_VERSION:
+        mtbbus_output_buf[0] = 2+1;
+        mtbbus_output_buf[3] = 0x10;
+        break;
+
+    case MTBBUS_DV_STATE:
+        mtbbus_output_buf[0] = 2+1;
+        mtbbus_output_buf[3] = (mtbbus_warn_flags.all > 0) << 1;
+        break;
+
+    case MTBBUS_DV_UPTIME:
+        mtbbus_output_buf[0] = 2+4;
+        mtbbus_output_buf[3] = (uptime_seconds >> 24);
+        mtbbus_output_buf[4] = (uptime_seconds >> 16) & 0xFF;
+        mtbbus_output_buf[5] = (uptime_seconds >> 8) & 0xFF;
+        mtbbus_output_buf[6] = (uptime_seconds) & 0xFF;
+        break;
+
+    case MTBBUS_DV_WARNINGS:
+        mtbbus_warn_flags_old = mtbbus_warn_flags;
+        mtbbus_output_buf[0] = 2+1;
+        mtbbus_output_buf[3] = mtbbus_warn_flags.all;
+        break;
+
+    default:
+        mtbbus_output_buf[0] = 2+0;
+        mtbbus_warn_flags_old = mtbbus_warn_flags;
+    }
+
+    mtbbus_send_buf_autolen();
 }
 
 /* MTBbus speed autodetection ------------------------------------------------*/
@@ -592,3 +631,5 @@ void btn_long_press(void) {
     if (!mtbbus_addressed())
         autodetect_mtbbus_speed();
 }
+
+///////////////////////////////////////////////////////////////////////////////

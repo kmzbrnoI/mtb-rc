@@ -28,3 +28,7 @@ typedef union { // TODO
 
 extern mtbbus_warn_flags_t mtbbus_warn_flags;
 extern mtbbus_warn_flags_t mtbbus_warn_flags_old;
+
+extern uint32_t uptime_seconds;
+
+void diag_update(void); // called each 100ms
