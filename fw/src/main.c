@@ -13,6 +13,7 @@
 #include "inputs.h"
 #include "dcc_ll.h"
 #include "dcc_mw.h"
+#include "common.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -495,6 +496,9 @@ void mtbbus_send_diag_value(uint8_t i) {
     mtbbus_output_buf[1] = MTBBUS_CMD_MISO_DIAG_VALUE;
     mtbbus_output_buf[2] = i;
 
+    // Most of DVs are 32bit
+    mtbbus_output_buf[0] = 2+4;
+
     switch (i) {
     case dvVersion:
         mtbbus_output_buf[0] = 2+1;
@@ -507,17 +511,37 @@ void mtbbus_send_diag_value(uint8_t i) {
         break;
 
     case dvUptime:
-        mtbbus_output_buf[0] = 2+4;
-        mtbbus_output_buf[3] = (uptime_seconds >> 24);
-        mtbbus_output_buf[4] = (uptime_seconds >> 16) & 0xFF;
-        mtbbus_output_buf[5] = (uptime_seconds >> 8) & 0xFF;
-        mtbbus_output_buf[6] = (uptime_seconds) & 0xFF;
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], uptime_seconds);
         break;
 
     case dvWarnings:
         mtbbus_warn_flags_old = mtbbus_warn_flags;
         mtbbus_output_buf[0] = 2+1;
         mtbbus_output_buf[3] = mtbbus_warn_flags.all;
+        break;
+
+    case dvRCLLCutoutsStarted:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_started);
+        break;
+
+    case dvRCLLCutoutsFinished:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_finished);
+        break;
+
+    case dvRCLLCutoutsTimeout:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_timeout);
+        break;
+
+    case dvRCLLCutoutsDataCh1:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_data_ch1);
+        break;
+
+    case dvRCLLCutoutsDataCh2:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_data_ch2);
+        break;
+
+    case dvRCLLCutoutsNoReadyToParse:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_no_ready_to_parse);
         break;
 
     default:
