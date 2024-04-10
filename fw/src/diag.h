@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "railcom_addrs.h" // RC_TRACKS_COUNT
+
 typedef union {
     struct {
         bool addr_zero : 1;
@@ -26,6 +28,17 @@ typedef union { // TODO
     uint8_t all;
 } mtbbus_warn_flags_t;
 
+enum MtbRcMWDV {
+    dviRCMWCh1InvalidData = 0,
+    dviRCMWCh2InvalidData = 1,
+    dviRCMWAddr1ReceivedCountResets = 2,
+    dviRCMWAddr2ReceivedCountResets = 3,
+    dviRCMWApidAdrLowReceived = 4,
+    dviRCMWApidAdrHighReceived = 5,
+    dviRCMWCh2Used = 6,
+    dviRCMWCount
+};
+
 enum MtbRcDV {
     dvVersion = 0,
     dvState = 1,
@@ -41,6 +54,12 @@ enum MtbRcDV {
     dvRCLLCutoutsDataCh1 = 35,
     dvRCLLCutoutsDataCh2 = 36,
     dvRCLLCutoutsNoReadyToParse = 37,
+
+    dvRCMWFirst = 40,
+    dvRCMWLast = dvRCMWFirst+dviRCMWCount-1,
+
+    dvRCMWTrackFirst = 50,
+    dvRCMWTrackLast = dvRCMWTrackFirst+10*RC_TRACKS_COUNT,
 };
 
 extern mtbbus_warn_flags_t mtbbus_warn_flags;

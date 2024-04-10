@@ -499,6 +499,24 @@ void mtbbus_send_diag_value(uint8_t i) {
     // Most of DVs are 32bit
     mtbbus_output_buf[0] = 2+4;
 
+    if ((i >= dvRCMWFirst) && (i <= dvRCMWLast)) {
+        // A little bit of pointer-arithmetic magic...
+        memcpy(&mtbbus_output_buf[3], (uint32_t*)(&rc_mw_diag)+(i-dvRCMWFirst), sizeof(uint32_t));
+        mtbbus_send_buf_autolen();
+        return;
+    }
+
+    if ((i >= dvRCMWTrackFirst) && (i <= dvRCMWTrackLast)) {
+        // A little bit of pointer-arithmetic magic...
+        unsigned track = (i-dvRCMWTrackFirst) / 10;
+        unsigned member_i = (i-dvRCMWTrackFirst) % 10;
+        if (member_i < dviRCMWCount) {
+            memcpy(&mtbbus_output_buf[3], (uint32_t*)(&rc_mw_track_diag[track])+member_i, sizeof(uint32_t));
+            mtbbus_send_buf_autolen();
+            return;
+        }
+    }
+
     switch (i) {
     case dvVersion:
         mtbbus_output_buf[0] = 2+1;
