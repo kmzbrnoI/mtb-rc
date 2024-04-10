@@ -37,6 +37,8 @@ void rcmw_init(void) {
     for (size_t i = 0; i < RC_TRACKS_COUNT; i++) {
         ch1[i].addr1_received_count = 0;
         ch1[i].addr2_received_count = 0;
+        ch1[i].addr1 = 0xFF;
+        ch1[i].addr2 = 0xFF;
     }
     rc_mux = 0;
     _mux_apply();
