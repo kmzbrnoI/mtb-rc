@@ -35,7 +35,8 @@ enum MtbRcMWDV {
     dviRCMWAddr2ReceivedCountResets = 3,
     dviRCMWApidAdrLowReceived = 4,
     dviRCMWApidAdrHighReceived = 5,
-    dviRCMWCh2Used = 6,
+    dviRCMWCh1AddrAdded = 6,
+    dviRCMWCh2AddrAdded = 7,
     dviRCMWCount
 };
 

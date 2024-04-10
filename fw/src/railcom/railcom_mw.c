@@ -111,8 +111,10 @@ void _parse_ch1(size_t track, uint8_t buf[], size_t size) {
 }
 
 void _update_ch1_addrs(size_t track) {
-    if ((ch1[track].addr1_received_count == CH1_RELIAB_THRSHD) && (ch1[track].addr2_received_count == CH1_RELIAB_THRSHD))
+    if ((ch1[track].addr1_received_count == CH1_RELIAB_THRSHD) && (ch1[track].addr2_received_count == CH1_RELIAB_THRSHD)) {
         rca_add_or_update(track, addr_decode(ch1[track].addr1, ch1[track].addr2));
+        DIAG_INC(ch1_addr_added, track);
+    }
 }
 
 uint16_t addr_decode(uint8_t addr1, uint8_t addr2) {
@@ -134,7 +136,7 @@ void _parse_ch2(size_t track, uint8_t buf[], size_t size) {
 
     if (dcc_addr_valid()) {
         rca_add_or_update(track, dcc_last_address);
-        DIAG_INC(ch2_used, track);
+        DIAG_INC(ch2_addr_added, track);
     }
 }
 

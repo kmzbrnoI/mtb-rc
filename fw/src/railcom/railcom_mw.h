@@ -43,7 +43,8 @@ typedef struct {
     uint32_t addr2_received_count_resets;
     uint32_t apid_adr_low_received;
     uint32_t apid_adr_high_received;
-    uint32_t ch2_used;
+    uint32_t ch1_addr_added;
+    uint32_t ch2_addr_added;
 } RCMWTrackDiag;
 
 extern RCMWTrackDiag rc_mw_diag;
