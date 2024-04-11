@@ -53,4 +53,4 @@ extern RCMWTrackDiag rc_mw_track_diag[RC_TRACKS_COUNT];
 void rcmw_init(void);
 void rcmw_update(void);
 void rcmw_mux_to_change(void);
-
+void rcmw_update_100ms(void);

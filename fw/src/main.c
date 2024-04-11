@@ -114,6 +114,7 @@ int main(void) {
         if (elapsed_100ms) {
             elapsed_100ms = false;
             rca_update_100ms();
+            rcmw_update_100ms();
             diag_update();
             rcmw_mux_to_change(); // change RailCom multiplexing each 100 ms
         }
