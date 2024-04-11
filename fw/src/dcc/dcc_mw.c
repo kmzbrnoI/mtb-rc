@@ -1,5 +1,6 @@
 /* DCC middle-ware implementation */
 
+#include <string.h>
 #include "dcc_mw.h"
 #include "stm32f1xx_hal.h"
 #include "dcc_ll.h"
@@ -8,6 +9,7 @@
 
 uint16_t dcc_last_address;
 volatile unsigned dcc_time_since_address;
+DCCMWDiag dcc_mw_diag;
 
 /* Private prototypes --------------------------------------------------------*/
 
@@ -21,6 +23,7 @@ uint16_t _dcc_mf_address(uint8_t byte1, uint8_t byte2);
 void dcc_mw_init(void) {
     dcc_last_address = 0;
     dcc_time_since_address = DCC_TIME_SINCE_ADDRESS_MAX;
+    memset((void*)&dcc_mw_diag, 0, sizeof(dcc_mw_diag));
 }
 
 void dcc_mw_update(void) {
@@ -38,6 +41,7 @@ void _process_ll(void) {
 
     dcc_last_address = addr;
     dcc_time_since_address = 0;
+    dcc_mw_diag.mobile_reads++;
 
 process_end:
     dcc_ll_received = false;

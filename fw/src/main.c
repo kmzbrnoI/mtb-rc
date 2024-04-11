@@ -563,6 +563,22 @@ void mtbbus_send_diag_value(uint8_t i) {
         MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_no_ready_to_parse);
         break;
 
+    case dvRCDCCPacketsReceived:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], dcc_ll_diag.packets_received);
+        break;
+
+    case dvRCDCCBadXor:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], dcc_ll_diag.bad_xor);
+        break;
+
+    case dvRCDCCLogical0PreambleSoon:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], dcc_ll_diag.logical_0_preamble_soon);
+        break;
+
+    case dvRCDCCMobileDecodersRead:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], dcc_mw_diag.mobile_reads);
+        break;
+
     default:
         mtbbus_output_buf[0] = 2+0;
         mtbbus_warn_flags_old = mtbbus_warn_flags;

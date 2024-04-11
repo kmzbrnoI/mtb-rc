@@ -17,3 +17,9 @@ void dcc_mw_init(void);
 void dcc_mw_update(void);
 
 bool dcc_addr_valid(void);
+
+typedef struct {
+    uint32_t mobile_reads;
+} DCCMWDiag;
+
+extern DCCMWDiag dcc_mw_diag;

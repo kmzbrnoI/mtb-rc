@@ -47,7 +47,7 @@ void railcom_ll_init(void) {
     }
     rc_receiving = false;
 
-    memset((void*)&rc_ll_diag, 0, sizeof(RCLLDiag));
+    memset((void*)&rc_ll_diag, 0, sizeof(rc_ll_diag));
 }
 
 void _rc1_init(void) {

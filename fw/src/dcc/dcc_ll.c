@@ -25,6 +25,7 @@ TIM_HandleTypeDef htim2; // dcc parsing timer
 
 volatile bool _intr_received = false;
 volatile bool _intr_bit_value = false;
+volatile DCCLLDiag dcc_ll_diag;
 
 typedef enum {DS_preamble, DS_data, DS_startstopbit} DCC_State;
 
@@ -53,6 +54,7 @@ void dcc_ll_init(void) {
     _demod_state.state = DS_preamble;
     _demod_state.bit_cnt = 0;
     _demod_state.byte_cnt = 0;
+    memset((void*)&dcc_ll_diag, 0, sizeof(dcc_ll_diag));
 
     _tim2_init();
     gpio_dcc_enable_fall_irq();
@@ -111,6 +113,10 @@ void dcc_ll_update(void) {
                 _demod_state.state = DS_data;
             } else {
                 // error
+                if (_demod_state.bit_cnt > 0) {
+                    // this is probably not an error - probably last edge of previous DCC packet
+                    dcc_ll_diag.logical_0_preamble_soon++;
+                }
                 _demod_state.bit_cnt = 0;
                 // remain in "preamble" state
             }
@@ -137,12 +143,15 @@ void dcc_ll_update(void) {
             for (unsigned i = 0; i < _demod_state.byte_cnt; i++)
                 xor ^= _demod_state.byte_buffer[i];
             if (xor == 0) {
-                if (!dcc_ll_received) { // copy to output buffer only if data processed by higher layers
+                if (!dcc_ll_received) { // copy to output buffer only if previous data already processed by higher layers
                     dcc_ll_received_len = _demod_state.byte_cnt-1;
                     memcpy(dcc_ll_received_buf, _demod_state.byte_buffer, _demod_state.byte_cnt-1);
                     dcc_ll_received = true;
+                    dcc_ll_diag.packets_received++;
                 }
-            } // TODO: error reporting could be added to 'else' branch
+            } else {
+                dcc_ll_diag.bad_xor++;
+            }
         } else {
             // log 0 = startbit
             _demod_state.byte_buffer[_demod_state.byte_cnt++] = _demod_state.bit_buffer;

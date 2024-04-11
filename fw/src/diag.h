@@ -60,7 +60,12 @@ enum MtbRcDV {
     dvRCMWLast = dvRCMWFirst+dviRCMWCount-1,
 
     dvRCMWTrackFirst = 50,
-    dvRCMWTrackLast = dvRCMWTrackFirst+10*RC_TRACKS_COUNT,
+    dvRCMWTrackLast = dvRCMWTrackFirst+(10*RC_TRACKS_COUNT)-1,
+
+    dvRCDCCPacketsReceived = 130,
+    dvRCDCCBadXor = 131,
+    dvRCDCCLogical0PreambleSoon = 132,
+    dvRCDCCMobileDecodersRead = 133,
 };
 
 extern mtbbus_warn_flags_t mtbbus_warn_flags;
