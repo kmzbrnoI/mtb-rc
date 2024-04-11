@@ -539,6 +539,18 @@ void mtbbus_send_diag_value(uint8_t i) {
         mtbbus_output_buf[3] = mtbbus_warn_flags.all;
         break;
 
+    case dvMtbBusReceived:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], mtbbus_diag.received);
+        break;
+
+    case dvMtbBusBadCrc:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], mtbbus_diag.bad_crc);
+        break;
+
+    case dvMtbBusSent:
+        MEMCPY_FROM_VAR(&mtbbus_output_buf[3], mtbbus_diag.sent);
+        break;
+
     case dvRCLLCutoutsStarted:
         MEMCPY_FROM_VAR(&mtbbus_output_buf[3], rc_ll_diag.cutouts_started);
         break;

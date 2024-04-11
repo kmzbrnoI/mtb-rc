@@ -6,6 +6,7 @@
  * to the 'inquiry' message as soon as possible.
  */
 
+#include <string.h>
 #include "mtbbus.h"
 #include "stm32f1xx_hal.h"
 #include "gpio.h"
@@ -35,6 +36,8 @@ volatile MtbBusSpeed mtbbus_speed;
 void (*mtbbus_on_receive)(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len) = NULL;
 void (*mtbbus_on_sent)() = NULL;
 
+volatile MtbBusDiag mtbbus_diag;
+
 /* Local protototypes --------------------------------------------------------*/
 
 static inline void _mtbbus_send_buf();
@@ -52,6 +55,8 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
 
     mtbbus_addr = addr;
     mtbbus_speed = speed;
+
+    memset((void*)&mtbbus_diag, 0, sizeof(mtbbus_diag));
 
     huart3.Instance = USART3;
     huart3.Init.BaudRate = _mtbbus_speed(speed);
@@ -189,6 +194,7 @@ static inline void _mtbbus_send_buf() {
     gpio_uart_out();
     HAL_StatusTypeDef result = HAL_UART_Transmit_IT(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
     assert_param(result == HAL_OK);
+    mtbbus_diag.sent++;
 }
 
 void _uart_tx_complete(UART_HandleTypeDef *huart) {
@@ -243,8 +249,12 @@ static inline void _mtbbus_received_non_ninth(uint8_t data) {
     if (mtbbus_input_buf_size >= mtbbus_input_buf[0]+3) {
         // whole message received
         uint16_t msg_crc = (mtbbus_input_buf[mtbbus_input_buf_size-1] << 8) | (mtbbus_input_buf[mtbbus_input_buf_size-2]);
-        if (received_crc == msg_crc)
+        if (received_crc == msg_crc) {
             received = true;
+            mtbbus_diag.received++;
+        } else {
+            mtbbus_diag.bad_crc++;
+        }
 
         receiving = false;
         received_crc = 0;

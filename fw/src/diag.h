@@ -49,6 +49,10 @@ enum MtbRcDV {
     dvVMCU = 12,
     dvTempMCU = 13,
 
+    dvMtbBusReceived = 16,
+    dvMtbBusBadCrc = 17,
+    dvMtbBusSent = 18,
+
     dvRCLLCutoutsStarted = 32,
     dvRCLLCutoutsFinished = 33,
     dvRCLLCutoutsTimeout = 34,
