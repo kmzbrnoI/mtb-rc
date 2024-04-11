@@ -51,6 +51,8 @@ void rcmw_init(void) {
 void rcmw_update(void) {
     _poll_ll();
     if ((mux_to_change) && (!rc_receiving)) {
+        // poll again to get received data between first 2 lines of this function (this really happens!)
+        _poll_ll();
         mux_to_change = false;
         _mux_change();
     }
