@@ -1,4 +1,5 @@
 /* DCC packets parsing low-level implementation
+ * https://www.nmra.org/sites/default/files/s-92-2004-07.pdf
  *
  * DCC signal connected to external interrupt pin
  * timing provided by Timer2
@@ -113,8 +114,8 @@ void dcc_ll_update(void) {
                 _demod_state.state = DS_data;
             } else {
                 // error
-                if (_demod_state.bit_cnt > 0) {
-                    // this is probably not an error - probably last edge of previous DCC packet
+                if (_demod_state.bit_cnt > 1) {
+                    // when bit_cnt <= 1, probably not an error - probably just last edge of previous DCC packet
                     dcc_ll_diag.logical_0_preamble_soon++;
                 }
                 _demod_state.bit_cnt = 0;
@@ -133,8 +134,8 @@ void dcc_ll_update(void) {
 
     case DS_startstopbit: // expecting start or stop bit
         if (_intr_bit_value) {
-            // log 1 = stopbit
-            _demod_state.bit_cnt = 0; // TODO: SWexla mismatch ???
+            // log 1 = whole packet stopbit
+            _demod_state.bit_cnt = 1; // log. 1 could be a first bit in the preamble
             _demod_state.byte_buffer[_demod_state.byte_cnt++] = _demod_state.bit_buffer;
             _demod_state.state = DS_preamble;
 
@@ -153,7 +154,7 @@ void dcc_ll_update(void) {
                 dcc_ll_diag.bad_xor++;
             }
         } else {
-            // log 0 = startbit
+            // log 0 = next byte startbit
             _demod_state.byte_buffer[_demod_state.byte_cnt++] = _demod_state.bit_buffer;
             _demod_state.bit_buffer = 0;
             _demod_state.bit_cnt = 0;
