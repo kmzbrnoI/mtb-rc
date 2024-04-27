@@ -75,14 +75,6 @@ int mtbbus_send_buf(void);
 #define MTBBUS_ERROR_BAD_ADDRESS 0x03
 #define MTBBUS_ERROR_BUSY 0x04
 
-#define MTBBUS_DV_VERSION 0
-#define MTBBUS_DV_STATE 1
-#define MTBBUS_DV_UPTIME 2
-#define MTBBUS_DV_ERRORS 10
-#define MTBBUS_DV_WARNINGS 11
-#define MTBBUS_DV_VMCU 12
-#define MTBBUS_DV_TEMPMCU 13
-
 typedef struct {
     uint32_t received;
     uint32_t bad_crc;
