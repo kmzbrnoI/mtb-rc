@@ -22,7 +22,7 @@ const PinDef pin_cutout = {GPIOA, GPIO_PIN_4};
 const PinDef pin_rc1 = {GPIOA, GPIO_PIN_10};
 const PinDef pin_rc2 = {GPIOA, GPIO_PIN_3};
 const PinDef pin_mult1 = {GPIOA, GPIO_PIN_1};
-const PinDef pin_mult2 = {GPIOA, GPIO_PIN_2}; // TODO: conflict with RC2 TX (USART2 TX)
+const PinDef pin_mult2 = {GPIOA, GPIO_PIN_2}; // warning: conflict with RC2 TX (USART2 TX) (no problem so far)
 
 const PinDef pin_mtbbus_tx = {GPIOB, GPIO_PIN_10};
 const PinDef pin_mtbbus_rx = {GPIOB, GPIO_PIN_11};
@@ -41,7 +41,7 @@ void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
 void gpio_init(void) {
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOD_CLK_ENABLE(); // TODO: delete? was in generated template
+    // __HAL_RCC_GPIOD_CLK_ENABLE(); // was in generated template
 
     // GPIOA outputs
     gpio_pins_init(
