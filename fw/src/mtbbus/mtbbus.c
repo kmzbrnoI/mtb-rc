@@ -15,6 +15,8 @@
 /* Local variables -----------------------------------------------------------*/
 
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma1ch2;
+
 volatile bool initialized = false;
 
 uint8_t mtbbus_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
@@ -52,12 +54,14 @@ void _uart_rx_complete(UART_HandleTypeDef *huart);
 
 void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     __HAL_RCC_USART3_CLK_ENABLE();
+    __HAL_RCC_DMA1_CLK_ENABLE();
 
     mtbbus_addr = addr;
     mtbbus_speed = speed;
 
     memset((void*)&mtbbus_diag, 0, sizeof(mtbbus_diag));
 
+    // USART3
     huart3.Instance = USART3;
     huart3.Init.BaudRate = _mtbbus_speed(speed);
     huart3.Init.WordLength = UART_WORDLENGTH_9B;
@@ -68,14 +72,30 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     huart3.Init.OverSampling = UART_OVERSAMPLING_16;
     assert_param(HAL_UART_Init(&huart3) == HAL_OK);
 
+    // USART3 interrupt tnit
+    HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(USART3_IRQn);
+
+    // TX DMA (started ad-hoc each time)
+    hdma1ch2.Instance = DMA1_Channel2;
+    hdma1ch2.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma1ch2.Init.Mode = DMA_NORMAL;
+    hdma1ch2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma1ch2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma1ch2.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma1ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma1ch2.Init.Priority = DMA_PRIORITY_MEDIUM;
+    assert_param(HAL_DMA_Init(&hdma1ch2) == HAL_OK);
+
+    // TX DMA interrupt init
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+    __HAL_LINKDMA(&huart3, hdmatx, hdma1ch2);
+
     gpio_pin_init(pin_mtbbus_tx, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_pin_init(pin_mtbbus_rx, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_pin_init(pin_mtbbus_te, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
     gpio_uart_in();
-
-    /* USART3 interrupt Init */
-    HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART3_IRQn);
 
     assert_param(HAL_UART_RegisterCallback(&huart3, HAL_UART_TX_COMPLETE_CB_ID, _uart_tx_complete) == HAL_OK);
     assert_param(HAL_UART_RegisterCallback(&huart3, HAL_UART_RX_COMPLETE_CB_ID, _uart_rx_complete) == HAL_OK);
@@ -104,6 +124,8 @@ void mtbbus_deinit(void) {
     assert_param(HAL_UART_UnRegisterCallback(&huart3, HAL_UART_RX_COMPLETE_CB_ID) == HAL_OK);
 
     HAL_NVIC_DisableIRQ(USART3_IRQn);
+
+    // DMA disabling missing
 }
 
 void mtbbus_set_speed(MtbBusSpeed speed) {
@@ -113,6 +135,10 @@ void mtbbus_set_speed(MtbBusSpeed speed) {
 
 void USART3_IRQHandler(void) {
     HAL_UART_IRQHandler(&huart3);
+}
+
+void DMA1_Channel2_IRQHandler() {
+    HAL_DMA_IRQHandler(&hdma1ch2);
 }
 
 void mtbbus_update(void) {
@@ -192,7 +218,7 @@ static inline void _mtbbus_send_buf() {
     // All data as one transaction
     sending = true;
     gpio_uart_out();
-    HAL_StatusTypeDef result = HAL_UART_Transmit_IT(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
+    HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
     assert_param(result == HAL_OK);
     mtbbus_diag.sent++;
 }
