@@ -4075,7 +4075,7 @@
     (property "Reference" "R28" (at 146.05 123.19 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "1k" (at 146.05 125.73 0)
+    (property "Value" "4k7" (at 145.288 125.6721 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" (at 141.732 124.46 90)
