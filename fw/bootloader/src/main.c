@@ -3,7 +3,9 @@
 #include "dwt_delay.h"
 #include "assert.h"
 #include "main.h"
+#include "gpio.h"
 #include "mtbbus.h"
+#include "eeprom.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -11,28 +13,46 @@ TIM_HandleTypeDef htim3; // general-purpose @ 500 us
 
 /* Private function prototypes -----------------------------------------------*/
 
-static void init(void);
 static void init_clock(void);
 static void init_tim3(void);
 static void timer_10ms(void);
+static void _mtbbus_init(void);
 
 void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len); // intentionally not static
 static void mtbbus_send_ack(void);
 static void mtbbus_send_error(uint8_t code);
 
+/* Defines -------------------------------------------------------------------*/
+
+#define EEPROM_ADDR_VERSION                (0x00) // uint16
+#define EEPROM_ADDR_MTBBUS_SPEED           (0x02) // uint16
+#define EEPROM_ADDR_BOOT                   (0x04) // uint16
+#define EEPROM_ADDR_BOOTLOADER_VER         (0x06) // uint16
+
+#define CONFIG_MODULE_TYPE 0x30
+#define CONFIG_FW_MAJOR 1
+#define CONFIG_FW_MINOR 0
+#define CONFIG_PROTO_MAJOR 4
+#define CONFIG_PROTO_MINOR 1
+
+#define CONFIG_BOOT_FWUPGD 0x01
+#define CONFIG_BOOT_NORMAL 0x00
+
+/* Global variables ----------------------------------------------------------*/
+
+typedef union {
+    struct {
+        bool addr_zero : 1;
+        bool crc: 1;
+    } bits;
+    uint8_t all;
+} error_flags_t;
+
+volatile error_flags_t error_flags = {0};
+
 /* Implementation ------------------------------------------------------------*/
 
 int main(void) {
-    init();
-
-    while (true) {
-        mtbbus_update();
-    }
-}
-
-/* Init ----------------------------------------------------------------------*/
-
-void init(void) {
     bool success = (HAL_Init() == HAL_OK);
     assert_param(success);
 
@@ -45,10 +65,26 @@ void init(void) {
 
     init_tim3();
 
-    uint8_t _mtbbus_addr = gpio_mtbbus_addr();
-    mtbbus_init(_mtbbus_addr, config_mtbbus_speed);
-    mtbbus_on_receive = mtbbus_received;
-    mtbbus_update_polarity();
+    gpio_pin_write(pin_led_red, true);
+    // gpio_pin_write(pin_led_green, false); // TODO enable?
+    // gpio_pin_write(pin_led_blue, false); // TODO enable?
+
+    /* uint8_t boot = eeprom_read_byte(EEPROM_ADDR_BOOT);
+    if (boot != CONFIG_BOOT_NORMAL)
+        eeprom_write_byte(EEPROM_ADDR_BOOT, CONFIG_BOOT_NORMAL);
+
+    eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MAJOR, CONFIG_FW_MAJOR);
+    eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MINOR, CONFIG_FW_MINOR);
+
+    if ((boot != CONFIG_BOOT_FWUPGD) && (io_button()))
+        check_and_boot(); */
+
+    // Not booting → start MTBbus
+    _mtbbus_init();
+
+    while (true) {
+        mtbbus_update();
+    }
 }
 
 void init_clock(void) {
@@ -100,6 +136,18 @@ void init_tim3(void) {
     HAL_NVIC_EnableIRQ(TIM3_IRQn);
 
     HAL_TIM_Base_Start_IT(&htim3);
+}
+
+void _mtbbus_init(void) {
+    uint8_t config_mtbbus_speed = ee_read_uint16(EEPROM_ADDR_MTBBUS_SPEED);
+    if (config_mtbbus_speed > MTBBUS_SPEED_MAX)
+        config_mtbbus_speed = MTBBUS_SPEED_38400;
+
+    uint8_t _mtbbus_addr = gpio_mtbbus_addr();
+    error_flags.bits.addr_zero = (_mtbbus_addr == 0);
+
+    mtbbus_init(_mtbbus_addr, config_mtbbus_speed);
+    mtbbus_on_receive = mtbbus_received;
 }
 
 /* System stuff --------------------------------------------------------------*/
@@ -180,107 +228,49 @@ void TIM3_IRQHandler(void) {
 /* MTBbus --------------------------------------------------------------------*/
 
 void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len) {
-    //if (!initialized)
-    //    return;
-
     DWT_Delay(2);
-
-    mtbbus_timeout = 0;
-    if (mtbbus_auto_speed_in_progress)
-        mtbbus_auto_speed_received();
 
     switch (command_code) {
 
     case MTBBUS_CMD_MOSI_MODULE_INQUIRY:
-        if ((!broadcast) && (data_len >= 1)) {
-            static bool last_input_changed = false;
-            static bool first_scan = true;
-            bool last_ok = data[0] & 0x01;
-
-            if ((rc_tracks_changed) || (first_scan) || (last_input_changed && !last_ok)) {
-                last_input_changed = true;
-                first_scan = false;
-                rc_tracks_changed = false;
-                mtbbus_send_inputs(MTBBUS_CMD_MISO_INPUT_CHANGED);
-            } else {
-                last_input_changed = false;
-                mtbbus_send_ack();
-            }
-
+        if (!broadcast) {
+            mtbbus_send_ack();
         } else { goto INVALID_MSG; }
         break;
 
     case MTBBUS_CMD_MOSI_INFO_REQ:
         if (!broadcast) {
-            uint16_t bootloader_ver = config_bootloader_version();
-            mtbbus_output_buf[0] = 9;
+            mtbbus_output_buf[0] = 7;
             mtbbus_output_buf[1] = MTBBUS_CMD_MISO_MODULE_INFO;
             mtbbus_output_buf[2] = CONFIG_MODULE_TYPE;
-            mtbbus_output_buf[3] = (mtbbus_warn_flags.all > 0) << 2;
+            mtbbus_output_buf[3] = (error_flags.bits.crc) ? 2 : 1;
             mtbbus_output_buf[4] = CONFIG_FW_MAJOR;
             mtbbus_output_buf[5] = CONFIG_FW_MINOR;
             mtbbus_output_buf[6] = CONFIG_PROTO_MAJOR;
             mtbbus_output_buf[7] = CONFIG_PROTO_MINOR;
-            mtbbus_output_buf[8] = bootloader_ver >> 8;
-            mtbbus_output_buf[9] = bootloader_ver & 0xFF;
             mtbbus_send_buf_autolen();
-        } else { goto INVALID_MSG; }
-        break;
-
-    case MTBBUS_CMD_MOSI_SET_CONFIG:
-        if ((data_len == 0) && (!broadcast)) { // no configuration for MTB-RC module
-            mtbbus_send_ack();
-        } else { goto INVALID_MSG; }
-        break;
-
-    case MTBBUS_CMD_MOSI_GET_CONFIG:
-        if (!broadcast) {
-            mtbbus_output_buf[0] = 1;
-            mtbbus_output_buf[1] = MTBBUS_CMD_MISO_MODULE_CONFIG;
-            mtbbus_send_buf_autolen();
-        } else { goto INVALID_MSG; }
-        break;
-
-    case MTBBUS_CMD_MOSI_BEACON:
-        if (data_len >= 1) {
-            beacon = data[0];
-            if (!broadcast)
-                mtbbus_send_ack();
-        } else { goto INVALID_MSG; }
-        break;
-
-    case MTBBUS_CMD_MOSI_GET_INPUT:
-        if (!broadcast) {
-            mtbbus_send_inputs(MTBBUS_CMD_MISO_INPUT_STATE);
-        } else { goto INVALID_MSG; }
-        break;
-
-    case MTBBUS_CMD_MOSI_RESET_OUTPUTS:
-        if (!broadcast)
-            mtbbus_send_ack();
-        break;
-
-    case MTBBUS_CMD_MOSI_CHANGE_ADDR:
-        if ((data_len >= 1) && (!broadcast)) {
-            mtbbus_send_error(MTBBUS_ERROR_UNSUPPORTED_COMMAND);
         } else { goto INVALID_MSG; }
         break;
 
     case MTBBUS_CMD_MOSI_CHANGE_SPEED:
         if (data_len >= 1) {
-            config_mtbbus_speed = data[0];
-            config_write = true;
             mtbbus_set_speed(data[0]);
-
             if (!broadcast)
                 mtbbus_send_ack();
+            // eeprom_update_byte(EEPROM_ADDR_MTBBUS_SPEED, data[0]);
         } else { goto INVALID_MSG; }
         break;
 
-    case MTBBUS_CMD_MOSI_FWUPGD_REQUEST:
+    case MTBBUS_CMD_MOSI_WRITE_FLASH:
         if ((data_len >= 1) && (!broadcast)) {
-            config_boot_fwupgd();
-            mtbbus_on_sent = &NVIC_SystemReset;
+            // TODO
+            mtbbus_send_ack();
+        } else { goto INVALID_MSG; }
+        break;
+
+    case MTBBUS_CMD_MOSI_WRITE_FLASH_STATUS_REQ:
+        if (!broadcast) {
+            // TODO
             mtbbus_send_ack();
         } else { goto INVALID_MSG; }
         break;
@@ -294,11 +284,12 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
         }
         break;
 
-    case MTBBUS_CMD_MOSI_DIAG_VALUE_REQ:
-        if (data_len >= 1) {
-            mtbbus_send_diag_value(data[0]);
+    case MTBBUS_CMD_MOSI_FWUPGD_REQUEST:
+        if (!broadcast) {
+            mtbbus_send_ack();
         } else { goto INVALID_MSG; }
         break;
+
 
 INVALID_MSG:
     default:
@@ -323,10 +314,6 @@ void mtbbus_send_error(uint8_t code) {
     mtbbus_output_buf[1] = MTBBUS_CMD_MISO_ERROR;
     mtbbus_output_buf[2] = code;
     mtbbus_send_buf_autolen();
-}
-
-void mtbbus_update_polarity(void) {
-    error_flags.bits.bad_mtbbus_polarity = !gpio_pin_read(pin_mtbbus_rx);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
