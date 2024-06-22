@@ -26,7 +26,8 @@ C_SOURCES = \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_flash_ex.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_exti.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_uart.c \
-	../../lib/dwt_delay/dwt_delay.c \
+	lib/dwt_delay/dwt_delay.c \
+	lib/eeprom/eeprom.c \
 	$(wildcard src/mtbbus/*.c) \
 	$(wildcard src/*.c)
 
@@ -69,10 +70,9 @@ C_INCLUDES = \
 	-I$(STM32_DRIVERS_PATH)/CMSIS/Device/ST/STM32F1xx/Include \
 	-I$(STM32_DRIVERS_PATH)/CMSIS/Include \
 	-Ilib/dwt_delay \
-	-I src \
-	-I src/mtbbus \
-	-I src/dcc \
-	-I src/railcom
+	-Ilib/eeprom \
+	-Isrc \
+	-Isrc/mtbbus
 
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -pedantic -std=c99 -fdata-sections -ffunction-sections
 CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -pedantic -std=c99 -fdata-sections -ffunction-sections
