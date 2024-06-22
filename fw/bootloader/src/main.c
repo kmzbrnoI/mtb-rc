@@ -3,6 +3,8 @@
 #include "stm32f1xx_ll_rcc.h"
 #include "stm32f1xx_ll_system.h"
 #include "stm32f1xx_ll_utils.h"
+#include "stm32f1xx_ll_bus.h"
+#include "stm32f1xx_ll_gpio.h"
 
 #include "dwt_delay.h"
 #include "assert.h"
@@ -74,12 +76,12 @@ int main(void) {
 
     /* Initialize all configured peripherals */
     gpio_init();
-    MX_DMA_Init();
-    MX_USART1_UART_Init();
-    MX_USART2_UART_Init();
-    MX_USART3_UART_Init();
-    MX_TIM1_Init();
-    MX_TIM2_Init();
+    //MX_DMA_Init();
+    //MX_USART1_UART_Init();
+    //MX_USART2_UART_Init();
+    //MX_USART3_UART_Init();
+    //MX_TIM1_Init();
+    //MX_TIM2_Init();
 
     init_tim3();
 
@@ -106,9 +108,6 @@ int main(void) {
 }
 
 void init_clock(void) {
-    // Configure Clock Security System
-    HAL_RCC_EnableCSS();
-
     // Configura flash latency
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
     while (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1);
@@ -136,7 +135,7 @@ void init_clock(void) {
 
 void init_tim3(void) {
     // General-purpose TIM3 @ 500 us
-    __HAL_RCC_TIM3_CLK_ENABLE();
+    /*__HAL_RCC_TIM3_CLK_ENABLE();
 
     htim3.Instance = TIM3;
     htim3.Init.Prescaler = 100;
@@ -144,13 +143,13 @@ void init_tim3(void) {
     htim3.Init.Period = 240;
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    assert_param(HAL_TIM_Base_Init(&htim3) == HAL_OK);
+    assert_param(HAL_TIM_Base_Init(&htim3) == HAL_OK);*/
 
     /* TIM3 interrupt Init */
-    HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+    /*HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM3_IRQn);
 
-    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_TIM_Base_Start_IT(&htim3);*/
 }
 
 void _mtbbus_init(void) {
@@ -235,7 +234,7 @@ void assert_failed(uint8_t *file, uint32_t line) {
 
 // General-purpose TIM3 @ 500 us
 void TIM3_IRQHandler(void) {
-    HAL_TIM_IRQHandler(&htim3);
+    //HAL_TIM_IRQHandler(&htim3);
 }
 
 /* MTBbus --------------------------------------------------------------------*/
