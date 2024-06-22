@@ -12,20 +12,14 @@ STM32_DRIVERS_PATH = $(STM32_CUBE_PATH_185)/Drivers
 # Something like '~/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Src/'
 
 C_SOURCES = \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_gpio_ex.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_tim.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_tim_ex.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_tim.c \
 	$(STM32_SRC_PATH)/stm32f1xx_ll_rcc.c \
 	$(STM32_SRC_PATH)/stm32f1xx_ll_utils.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_gpio.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_dma.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_cortex.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_pwr.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_flash.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_flash_ex.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_exti.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_uart.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_gpio.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_dma.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_pwr.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_exti.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_usart.c \
 	lib/dwt_delay/dwt_delay.c \
 	lib/eeprom/eeprom.c \
 	$(wildcard src/mtbbus/*.c) \
@@ -60,8 +54,8 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 
 AS_DEFS =
 C_DEFS = \
-	-DUSE_HAL_DRIVER \
-	-DSTM32F103xB
+	-DSTM32F103xB \
+	-DUSE_FULL_LL_DRIVER
 
 AS_INCLUDES =
 C_INCLUDES = \

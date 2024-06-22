@@ -57,15 +57,29 @@ volatile error_flags_t error_flags = {0};
 /* Implementation ------------------------------------------------------------*/
 
 int main(void) {
-    bool success = (HAL_Init() == HAL_OK);
-    assert_param(success);
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+
+    /* System interrupt init */
+    NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+
+    /* SysTick_IRQn interrupt configuration */
+    NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),15, 0));
+
+    /* NOJTAG: JTAG-DP Disabled and SW-DP Enabled */
+    LL_GPIO_AF_Remap_SWJ_NOJTAG();
 
     init_clock();
-    DWT_Init();
 
-    __HAL_RCC_AFIO_CLK_ENABLE();
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_AFIO_REMAP_SWJ_NOJTAG();
+    /* Initialize all configured peripherals */
+    gpio_init();
+    MX_DMA_Init();
+    MX_USART1_UART_Init();
+    MX_USART2_UART_Init();
+    MX_USART3_UART_Init();
+    MX_TIM1_Init();
+    MX_TIM2_Init();
 
     init_tim3();
 

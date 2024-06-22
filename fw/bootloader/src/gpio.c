@@ -1,5 +1,6 @@
 #include "gpio.h"
-#include "stm32f1xx_hal.h"
+#include "stm32f1xx_ll_gpio.h"
+#include "stm32f1xx_ll_bus.h"
 
 const PinDef pin_led_red = {GPIOB, GPIO_PIN_12};
 const PinDef pin_led_green = {GPIOB, GPIO_PIN_13};
@@ -27,68 +28,57 @@ const PinDef pin_debug_2 = {GPIOA, GPIO_PIN_6};
 /* Local prototypes ----------------------------------------------------------*/
 
 void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
-                    uint32_t pull, uint32_t speed, bool de_init_first);
+                    uint32_t pull, uint32_t speed, uint32_t outputType);
 
 /* Implementation ------------------------------------------------------------*/
 
 void gpio_init(void) {
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
 
-    // GPIOA outputs
-    gpio_pins_init(
-        GPIOA,
-        pin_debug_1.pin | pin_debug_2.pin,
-        GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false
-    );
+    gpio_pin_init(pin_debug_1, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_HIGH, LL_GPIO_OUTPUT_PUSHPULL);
+    gpio_pin_init(pin_debug_2, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_HIGH, LL_GPIO_OUTPUT_PUSHPULL);
 
-    // GPIOB outputs
-    gpio_pins_init(
-        GPIOB,
-        pin_led_blue.pin | pin_led_red.pin | pin_led_green.pin,
-        GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, false
-    );
+    gpio_pin_init(pin_led_red, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_LOW, LL_GPIO_OUTPUT_PUSHPULL);
+    gpio_pin_init(pin_led_green, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_LOW, LL_GPIO_OUTPUT_PUSHPULL);
+    gpio_pin_init(pin_led_blue, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_LOW, LL_GPIO_OUTPUT_PUSHPULL);
 
     for (size_t i = 0; i < MTBBUS_ADDR_INPUTS; i++)
-        gpio_pin_init(pins_addr[i], GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_LOW, false);
+        gpio_pin_init(pins_addr[i], LL_GPIO_MODE_INPUT, LL_GPIO_PULL_UP, LL_GPIO_SPEED_FREQ_LOW, 0);
 
-    gpio_pin_init(pin_btn, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_LOW, false);
+    gpio_pin_init(pin_btn, LL_GPIO_MODE_INPUT, LL_GPIO_PULL_UP, LL_GPIO_SPEED_FREQ_LOW, 0);
 }
 
 void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
-                    uint32_t pull, uint32_t speed, bool de_init_first) {
-
-    // HAL_GPIO_Init leaves some flags set if called multiple times
-    // on the same pin
-    if (de_init_first)
-        HAL_GPIO_DeInit(port, pinMask);
-
-    GPIO_InitTypeDef init;
+                    uint32_t pull, uint32_t speed, uint32_t outputType) {
+    LL_GPIO_InitTypeDef init;
     init.Pin = pinMask;
     init.Mode = mode;
-    init.Pull = pull;
     init.Speed = speed;
-    HAL_GPIO_Init(port, &init);
+    init.OutputType = outputType;
+    init.Pull = pull;
+    LL_GPIO_Init(port, &init);
 }
 
-inline void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t speed, bool de_init_first) {
-    gpio_pins_init(pin.port, pin.pin, mode, pull, speed, de_init_first);
-}
-
-void gpio_pin_deinit(PinDef pin) {
-    HAL_GPIO_DeInit(pin.port, pin.pin);
+inline void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t speed,
+                          uint32_t outputType) {
+    gpio_pins_init(pin.port, pin.pin, mode, pull, speed, outputType);
 }
 
 bool gpio_pin_read(PinDef pin) {
-    return HAL_GPIO_ReadPin(pin.port, pin.pin) == GPIO_PIN_SET;
+    return (LL_GPIO_ReadInputPort(pin.port) & pin.pin) > 0;
 }
 
 void gpio_pin_write(PinDef pin, bool value) {
-    HAL_GPIO_WritePin(pin.port, pin.pin, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    if (value) {
+        LL_GPIO_SetOutputPin(pin.port, pin.pin);
+    } else {
+        LL_GPIO_ResetOutputPin(pin.port, pin.pin);
+    }
 }
 
 void gpio_pin_toggle(PinDef pin) {
-    HAL_GPIO_TogglePin(pin.port, pin.pin);
+    LL_GPIO_TogglePin(pin.port, pin.pin);
 }
 
 uint8_t gpio_mtbbus_addr(void) {
