@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "assert.h"
+#include "stm32_assert.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

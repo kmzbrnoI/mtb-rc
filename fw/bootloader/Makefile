@@ -16,8 +16,8 @@ C_SOURCES = \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_tim.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_tim_ex.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_rcc.c \
-	$(STM32_SRC_PATH)/stm32f1xx_hal_rcc_ex.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_rcc.c \
+	$(STM32_SRC_PATH)/stm32f1xx_ll_utils.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_gpio.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_dma.c \
 	$(STM32_SRC_PATH)/stm32f1xx_hal_cortex.c \

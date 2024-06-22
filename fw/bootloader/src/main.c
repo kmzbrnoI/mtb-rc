@@ -1,5 +1,9 @@
 #include <stdbool.h>
 #include <string.h>
+#include "stm32f1xx_ll_rcc.h"
+#include "stm32f1xx_ll_system.h"
+#include "stm32f1xx_ll_utils.h"
+
 #include "dwt_delay.h"
 #include "assert.h"
 #include "main.h"
@@ -88,35 +92,32 @@ int main(void) {
 }
 
 void init_clock(void) {
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-    /** Initializes the RCC Oscillators according to the specified parameters
-    * in the RCC_OscInitTypeDef structure.
-    */
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-    RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
-    assert_param(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK);
-
-    /** Initializes the CPU, AHB and APB buses clocks
-    */
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-    assert_param(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) == HAL_OK);
-
-    /** Enables the Clock Security System
-    */
+    // Configure Clock Security System
     HAL_RCC_EnableCSS();
+
+    // Configura flash latency
+    LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
+    while (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1);
+
+    // Configure HSE
+    LL_RCC_HSE_Enable();
+    while (!LL_RCC_HSE_IsReady());
+
+    // Configure PLL
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE_DIV_1, LL_RCC_PLL_MUL_4);
+    LL_RCC_PLL_Enable();
+    while (LL_RCC_PLL_IsReady() != 1);
+
+    LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+    LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
+    LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
+
+    // Set System Clock Mux clock source
+    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
+    while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL);
+
+    LL_Init1msTick(48000000);
+    LL_SetSystemCoreClock(48000000);
 }
 
 void init_tim3(void) {
@@ -154,7 +155,6 @@ void _mtbbus_init(void) {
 
 // Non-maskable interrupt
 void NMI_Handler(void) {
-    HAL_RCC_NMI_IRQHandler();
     while (1) {
     }
 }
@@ -193,7 +193,6 @@ void PendSV_Handler(void) {
 
 // System tick timer
 void SysTick_Handler(void) {
-    HAL_IncTick();
 }
 
 #ifdef  USE_FULL_ASSERT
