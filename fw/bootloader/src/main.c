@@ -28,6 +28,8 @@ void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_
 static void mtbbus_send_ack(void);
 static void mtbbus_send_error(uint8_t code);
 
+static void check_and_boot(void);
+
 /* Defines -------------------------------------------------------------------*/
 
 #define EEPROM_ADDR_VERSION                (0x00) // uint16
@@ -93,10 +95,10 @@ int main(void) {
         eeprom_write_byte(EEPROM_ADDR_BOOT, CONFIG_BOOT_NORMAL);
 
     eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MAJOR, CONFIG_FW_MAJOR);
-    eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MINOR, CONFIG_FW_MINOR);
+    eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MINOR, CONFIG_FW_MINOR);*/
 
-    if ((boot != CONFIG_BOOT_FWUPGD) && (io_button()))
-        check_and_boot(); */
+    if (/*(boot != CONFIG_BOOT_FWUPGD) && */(!gpio_pin_read(pin_btn)))
+        check_and_boot();
 
     // Not booting → start MTBbus
     _mtbbus_init();
@@ -171,7 +173,9 @@ void _mtbbus_init(void) {
 /* System stuff --------------------------------------------------------------*/
 
 // Non-maskable interrupt
-void NMI_Handler(void) { fail(); }
+void NMI_Handler(void) {
+    fail();
+}
 
 void HardFault_Handler(void) {
     fail();
@@ -330,3 +334,12 @@ void mtbbus_send_error(uint8_t code) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void check_and_boot(void) {
+    while (true) {
+        gpio_pin_write(pin_led_blue, true);
+        LL_mDelay(500);
+        gpio_pin_write(pin_led_blue, false);
+        LL_mDelay(500);
+    }
+}

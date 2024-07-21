@@ -57,7 +57,7 @@ void gpio_pins_init(GPIO_TypeDef* port, uint32_t pin, uint32_t mode,
     init.Speed = speed;
     init.OutputType = outputType;
     init.Pull = pull;
-    LL_GPIO_Init(port, &init);
+    assert_param(LL_GPIO_Init(port, &init) == SUCCESS);
 }
 
 inline void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t speed,
@@ -66,7 +66,12 @@ inline void gpio_pin_init(PinDef pin, uint32_t mode, uint32_t pull, uint32_t spe
 }
 
 bool gpio_pin_read(PinDef pin) {
-    return (LL_GPIO_ReadInputPort(pin.port) & pin.pin) > 0;
+    // LL_GPIO_PIN8-15 is not (1 << GPIO), see stm32f1xx_ll_gpio.h
+    // -> transform to (1 << GPIO)
+    uint32_t _pin = pin.pin;
+    if (_pin> 0xFFFF)
+        _pin <<= 8;
+    return (LL_GPIO_ReadInputPort(pin.port) & _pin) > 0;
 }
 
 void gpio_pin_write(PinDef pin, bool value) {
