@@ -67,7 +67,7 @@ int main(void) {
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
     /* SysTick_IRQn interrupt configuration */
-    NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),15, 0));
+    NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
 
     /* NOJTAG: JTAG-DP Disabled and SW-DP Enabled */
     LL_GPIO_AF_Remap_SWJ_NOJTAG();
@@ -85,7 +85,6 @@ int main(void) {
 
     init_tim3();
 
-    gpio_pin_write(pin_led_red, true);
     // gpio_pin_write(pin_led_green, false); // TODO enable?
     // gpio_pin_write(pin_led_blue, false); // TODO enable?
 
@@ -104,6 +103,11 @@ int main(void) {
 
     while (true) {
         mtbbus_update();
+
+        gpio_pin_write(pin_led_green, true);
+        LL_mDelay(500);
+        gpio_pin_write(pin_led_green, false);
+        LL_mDelay(500);
     }
 }
 
@@ -167,48 +171,45 @@ void _mtbbus_init(void) {
 /* System stuff --------------------------------------------------------------*/
 
 // Non-maskable interrupt
-void NMI_Handler(void) {
-    while (1) {
-    }
-}
+void NMI_Handler(void) { fail(); }
 
 void HardFault_Handler(void) {
-    while (1) {
-    }
+    fail();
 }
 
 void MemManage_Handler(void) {
-    while (1) {
-    }
+    fail();
 }
 
 void BusFault_Handler(void) {
-    while (1) {
-    }
+    fail();
 }
 
 void UsageFault_Handler(void) {
-    while (1) {
-    }
+    fail();
 }
 
 // System service call via SWI instruction
 void SVC_Handler(void) {
+    fail();
 }
 
 // Debug monitor
 void DebugMon_Handler(void) {
+    fail();
 }
 
 // Pendable request for system service
 void PendSV_Handler(void) {
+    fail();
 }
 
 // System tick timer
 void SysTick_Handler(void) {
+    fail();
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -223,9 +224,9 @@ void assert_failed(uint8_t *file, uint32_t line) {
     gpio_pin_write(pin_led_blue, false);
     while (1) {
         gpio_pin_write(pin_led_red, true);
-        for (size_t i = 0; i < (1U << 20); i++) { __asm__("NOP"); }
+        LL_mDelay(200);
         gpio_pin_write(pin_led_red, false);
-        for (size_t i = 0; i < (1U << 20); i++) { __asm__("NOP"); }
+        LL_mDelay(200);
     }
 }
 #endif /* USE_FULL_ASSERT */
