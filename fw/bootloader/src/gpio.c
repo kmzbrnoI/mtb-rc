@@ -2,32 +2,32 @@
 #include "stm32f1xx_ll_gpio.h"
 #include "stm32f1xx_ll_bus.h"
 
-const PinDef pin_led_red = {GPIOB, GPIO_PIN_12};
-const PinDef pin_led_green = {GPIOB, GPIO_PIN_13};
-const PinDef pin_led_blue = {GPIOB, GPIO_PIN_14};
-const PinDef pin_btn = {GPIOB, GPIO_PIN_15};
+const PinDef pin_led_red = {GPIOB, LL_GPIO_PIN_12};
+const PinDef pin_led_green = {GPIOB, LL_GPIO_PIN_13};
+const PinDef pin_led_blue = {GPIOB, LL_GPIO_PIN_14};
+const PinDef pin_btn = {GPIOB, LL_GPIO_PIN_15};
 
 const PinDef pins_addr[] = {
-    {GPIOB, GPIO_PIN_0},
-    {GPIOB, GPIO_PIN_1},
-    {GPIOB, GPIO_PIN_2},
-    {GPIOB, GPIO_PIN_3},
-    {GPIOB, GPIO_PIN_4},
-    {GPIOB, GPIO_PIN_5},
-    {GPIOB, GPIO_PIN_6},
-    {GPIOB, GPIO_PIN_7},
+    {GPIOB, LL_GPIO_PIN_0},
+    {GPIOB, LL_GPIO_PIN_1},
+    {GPIOB, LL_GPIO_PIN_2},
+    {GPIOB, LL_GPIO_PIN_3},
+    {GPIOB, LL_GPIO_PIN_4},
+    {GPIOB, LL_GPIO_PIN_5},
+    {GPIOB, LL_GPIO_PIN_6},
+    {GPIOB, LL_GPIO_PIN_7},
 };
 
-const PinDef pin_mtbbus_tx = {GPIOB, GPIO_PIN_10};
-const PinDef pin_mtbbus_rx = {GPIOB, GPIO_PIN_11};
-const PinDef pin_mtbbus_te = {GPIOB, GPIO_PIN_9};
+const PinDef pin_mtbbus_tx = {GPIOB, LL_GPIO_PIN_10};
+const PinDef pin_mtbbus_rx = {GPIOB, LL_GPIO_PIN_11};
+const PinDef pin_mtbbus_te = {GPIOB, LL_GPIO_PIN_9};
 
-const PinDef pin_debug_1 = {GPIOA, GPIO_PIN_5};
-const PinDef pin_debug_2 = {GPIOA, GPIO_PIN_6};
+const PinDef pin_debug_1 = {GPIOA, LL_GPIO_PIN_5};
+const PinDef pin_debug_2 = {GPIOA, LL_GPIO_PIN_6};
 
 /* Local prototypes ----------------------------------------------------------*/
 
-void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
+void gpio_pins_init(GPIO_TypeDef* port, uint32_t pin, uint32_t mode,
                     uint32_t pull, uint32_t speed, uint32_t outputType);
 
 /* Implementation ------------------------------------------------------------*/
@@ -49,10 +49,10 @@ void gpio_init(void) {
     gpio_pin_init(pin_btn, LL_GPIO_MODE_INPUT, LL_GPIO_PULL_UP, LL_GPIO_SPEED_FREQ_LOW, 0);
 }
 
-void gpio_pins_init(GPIO_TypeDef* port, uint32_t pinMask, uint32_t mode,
+void gpio_pins_init(GPIO_TypeDef* port, uint32_t pin, uint32_t mode,
                     uint32_t pull, uint32_t speed, uint32_t outputType) {
     LL_GPIO_InitTypeDef init;
-    init.Pin = pinMask;
+    init.Pin = pin;
     init.Mode = mode;
     init.Speed = speed;
     init.OutputType = outputType;
