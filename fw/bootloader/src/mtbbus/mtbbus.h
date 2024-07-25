@@ -22,10 +22,10 @@ typedef enum {
 } MtbBusSpeed;
 
 extern uint8_t mtbbus_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
-extern volatile uint8_t mtbbus_output_buf_size;
+extern uint8_t mtbbus_output_buf_size;
 
-extern volatile uint8_t mtbbus_addr;
-extern volatile MtbBusSpeed mtbbus_speed;
+extern uint8_t mtbbus_addr;
+extern MtbBusSpeed mtbbus_speed;
 
 // ‹data› starts with Command code byte
 // ‹size› is amount of data bytes + 1
@@ -74,11 +74,3 @@ int mtbbus_send_buf(void);
 #define MTBBUS_ERROR_UNSUPPORTED_COMMAND 0x02
 #define MTBBUS_ERROR_BAD_ADDRESS 0x03
 #define MTBBUS_ERROR_BUSY 0x04
-
-typedef struct {
-    uint32_t received;
-    uint32_t bad_crc;
-    uint32_t sent;
-} MtbBusDiag;
-
-extern volatile MtbBusDiag mtbbus_diag;

@@ -17,39 +17,33 @@
 
 /* Local variables -----------------------------------------------------------*/
 
-//UART_HandleTypeDef huart3;
-//DMA_HandleTypeDef hdma1ch2;
-
-volatile bool initialized = false;
+bool _initialized = false;
 
 uint8_t mtbbus_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
-uint16_t _mtbbus_ui16_output_buf[MTBBUS_OUTPUT_BUF_MAX_SIZE];
-volatile uint8_t mtbbus_output_buf_size = 0;
-volatile bool sending = false;
+uint8_t mtbbus_output_buf_size = 0;
+int32_t _sent_i = -1; // -1 = not sending
 
-volatile uint8_t mtbbus_input_buf[MTBBUS_INPUT_BUF_MAX_SIZE];
-volatile uint8_t mtbbus_input_buf_size = 0;
-volatile uint16_t mtbbus_input_byte;
-volatile bool receiving = false;
-volatile uint16_t received_crc = 0;
-volatile uint8_t received_addr;
-volatile bool received = false;
-volatile bool sent = false;
+uint8_t _mtbbus_input_buf[MTBBUS_INPUT_BUF_MAX_SIZE];
+uint8_t _mtbbus_input_buf_size = 0;
+bool _receiving = false;
+uint16_t _received_crc = 0;
+uint8_t _received_addr;
 
-volatile uint8_t mtbbus_addr;
-volatile MtbBusSpeed mtbbus_speed;
+uint8_t mtbbus_addr;
+MtbBusSpeed mtbbus_speed;
 void (*mtbbus_on_receive)(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len) = NULL;
 void (*mtbbus_on_sent)() = NULL;
 
 /* Local protototypes --------------------------------------------------------*/
 
-static inline void _mtbbus_send_buf();
+static inline void _mtbbus_send_buf(void);
 static inline void _mtbbus_received_ninth(uint8_t data);
 static inline void _mtbbus_received_non_ninth(uint8_t data);
 static uint32_t _mtbbus_speed(MtbBusSpeed speed);
 
-//void _uart_tx_complete(UART_HandleTypeDef *huart);
-//void _uart_rx_complete(UART_HandleTypeDef *huart);
+void _mtbbus_tx_complete(void);
+void _mtbbus_rx_complete(uint8_t data, bool ninth);
+static inline bool _sending(void);
 
 /* Implementation ------------------------------------------------------------*/
 
@@ -100,29 +94,19 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     gpio_pin_init(pin_mtbbus_te, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_HIGH, 0);
     gpio_uart_in();
 
-    initialized = true;
+    _initialized = true;
 }
 
 void mtbbus_deinit(void) {
-    /*assert_param(HAL_UART_Abort_IT(&huart3) == HAL_OK);
+    LL_USART_Disable(USART3);
 
-    initialized = false;
-    sending = false;
-    receiving = false;
+    _initialized = false;
+    _sent_i = -1;
+    _receiving = false;
 
-    __HAL_RCC_USART3_CLK_DISABLE();
+    LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART3);
 
     gpio_uart_in();
-    gpio_pin_deinit(pin_mtbbus_tx);
-    gpio_pin_deinit(pin_mtbbus_rx);
-    gpio_pin_deinit(pin_mtbbus_te);
-
-    assert_param(HAL_UART_UnRegisterCallback(&huart3, HAL_UART_TX_COMPLETE_CB_ID) == HAL_OK);
-    assert_param(HAL_UART_UnRegisterCallback(&huart3, HAL_UART_RX_COMPLETE_CB_ID) == HAL_OK);
-
-    HAL_NVIC_DisableIRQ(USART3_IRQn);*/
-
-    // DMA disabling missing
 }
 
 void mtbbus_set_speed(MtbBusSpeed speed) {
@@ -130,29 +114,15 @@ void mtbbus_set_speed(MtbBusSpeed speed) {
     mtbbus_init(mtbbus_addr, speed);
 }
 
-void USART3_IRQHandler(void) {
-    //HAL_UART_IRQHandler(&huart3);
-}
-
-void DMA1_Channel2_IRQHandler() {
-    //HAL_DMA_IRQHandler(&hdma1ch2);
-}
-
 void mtbbus_update(void) {
-    if (received) {
-        received = false;
-        if (mtbbus_on_receive != NULL)
-            mtbbus_on_receive(received_addr == 0, mtbbus_input_buf[1],
-                              (uint8_t*)mtbbus_input_buf+2, mtbbus_input_buf_size-3);
+    if (LL_USART_IsActiveFlag_RXNE(USART3)) { // RX not-empty
+        LL_USART_ClearFlag_RXNE(USART3);
+        uint16_t received = LL_USART_ReceiveData9(USART3);
+        _mtbbus_rx_complete(received & 0xFF, received >> 8);
     }
-
-    if (sent) {
-        sent = false;
-        if (mtbbus_on_sent != NULL) {
-            void (*tmp)() = mtbbus_on_sent;
-            mtbbus_on_sent = NULL;
-            tmp();
-        }
+    if (LL_USART_IsActiveFlag_TXE(USART3)) { // TX complete
+        LL_USART_ClearFlag_RXNE(USART3);
+        _mtbbus_tx_complete();
     }
 }
 
@@ -183,10 +153,9 @@ int mtbbus_send(uint8_t *data, uint8_t size) {
     return 0;
 }
 
-int mtbbus_send_buf() {
-    if (sending)
+int mtbbus_send_buf(void) {
+    if (_sending())
         return 1;
-    sent = false;
 
     size_t i = mtbbus_output_buf_size;
     uint16_t crc = crc16modbus_bytes(0, (uint8_t*)mtbbus_output_buf, mtbbus_output_buf_size);
@@ -197,8 +166,8 @@ int mtbbus_send_buf() {
     return 0;
 }
 
-int mtbbus_send_buf_autolen() {
-    if (sending)
+int mtbbus_send_buf_autolen(void) {
+    if (_sending())
         return 1;
     if (mtbbus_output_buf[0] > MTBBUS_OUTPUT_BUF_MAX_SIZE_USER)
         return 2;
@@ -207,79 +176,78 @@ int mtbbus_send_buf_autolen() {
     return 0;
 }
 
-static inline void _mtbbus_send_buf() {
-    // Copy ui8 to ui16, because UART uses 9-bit communication
-    for (size_t i = 0; i < mtbbus_output_buf_size; i++)
-        _mtbbus_ui16_output_buf[i] = mtbbus_output_buf[i]; // ninth bit is alway 0 when sending
-
-    // All data as one transaction
-    sending = true;
+static inline void _mtbbus_send_buf(void) {
+    _sent_i = 0;
     gpio_uart_out();
-    //HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
-    //assert_param(result == HAL_OK);
-    //mtbbus_diag.sent++;
+    LL_USART_TransmitData9(USART3, (((uint16_t)1)<<8) | mtbbus_output_buf[0]);
 }
 
-void _uart_tx_complete() {
-    gpio_uart_in();
-    sending = false;
-    sent = true;
+void _mtbbus_tx_complete(void) {
+    _sent_i++;
+
+    if (_sent_i < mtbbus_output_buf_size) {
+        // Transfer incomplete
+        LL_USART_TransmitData9(USART3, mtbbus_output_buf[_sent_i]);
+    } else {
+        // Transfer complete
+        gpio_uart_in();
+        _sent_i = -1;
+        if (mtbbus_on_sent != NULL) {
+            void (*tmp)() = mtbbus_on_sent;
+            mtbbus_on_sent = NULL;
+            tmp();
+        }
+    }
 }
 
-bool mtbbus_can_fill_output_buf() {
-    return (initialized) && (!sending);
+bool mtbbus_can_fill_output_buf(void) {
+    return (_initialized) && (!_sending());
+}
+
+bool _sending(void) {
+    return (_sent_i != -1);
 }
 
 /* Receiving -----------------------------------------------------------------*/
 
-void _uart_rx_complete() {
-    bool ninth = (mtbbus_input_byte >> 8) & 1;
-    uint8_t data = mtbbus_input_byte & 0xFF;
-
+void _mtbbus_rx_complete(uint8_t data, bool ninth) {
     if (ninth)
         _mtbbus_received_ninth(data);
     else
         _mtbbus_received_non_ninth(data);
-
-    // Read next byte
-    //assert_param(HAL_UART_Receive_IT(&huart3, (uint8_t*)&mtbbus_input_byte, 1) == HAL_OK);
 }
 
 static inline void _mtbbus_received_ninth(uint8_t data) {
-    if (received) // received data pending
-        return;
+    _received_addr = data;
 
-    received_addr = data;
-
-    if ((received_addr == mtbbus_addr) || (received_addr == 0)) {
-        receiving = true;
-        mtbbus_input_buf_size = 0;
-        received_crc = crc16modbus_byte(0, received_addr);
+    if ((_received_addr == mtbbus_addr) || (_received_addr == 0)) {
+        _receiving = false;
+        _mtbbus_input_buf_size = 0;
+        _received_crc = crc16modbus_byte(0, _received_addr);
     }
 }
 
 static inline void _mtbbus_received_non_ninth(uint8_t data) {
-    if (!receiving)
+    if (!_receiving)
         return;
 
-    if (mtbbus_input_buf_size < MTBBUS_INPUT_BUF_MAX_SIZE) {
-        if ((mtbbus_input_buf_size == 0) || (mtbbus_input_buf_size <= mtbbus_input_buf[0]))
-            received_crc = crc16modbus_byte(received_crc, data);
-        mtbbus_input_buf[mtbbus_input_buf_size] = data;
-        mtbbus_input_buf_size++;
+    if (_mtbbus_input_buf_size < MTBBUS_INPUT_BUF_MAX_SIZE) {
+        if ((_mtbbus_input_buf_size == 0) || (_mtbbus_input_buf_size <= _mtbbus_input_buf[0]))
+            _received_crc = crc16modbus_byte(_received_crc, data);
+        _mtbbus_input_buf[_mtbbus_input_buf_size] = data;
+        _mtbbus_input_buf_size++;
     }
 
-    if (mtbbus_input_buf_size >= mtbbus_input_buf[0]+3) {
+    if (_mtbbus_input_buf_size >= _mtbbus_input_buf[0]+3) {
         // whole message received
-        uint16_t msg_crc = (mtbbus_input_buf[mtbbus_input_buf_size-1] << 8) | (mtbbus_input_buf[mtbbus_input_buf_size-2]);
-        if (received_crc == msg_crc) {
-            received = true;
-            //mtbbus_diag.received++;
-        } else {
-            //mtbbus_diag.bad_crc++;
+        uint16_t msg_crc = (_mtbbus_input_buf[_mtbbus_input_buf_size-1] << 8) | (_mtbbus_input_buf[_mtbbus_input_buf_size-2]);
+        if (_received_crc == msg_crc) {
+            if (mtbbus_on_receive != NULL)
+                mtbbus_on_receive(_received_addr == 0, _mtbbus_input_buf[1],
+                                  (uint8_t*)_mtbbus_input_buf+2, _mtbbus_input_buf_size-3);
         }
 
-        receiving = false;
-        received_crc = 0;
+        _receiving = false;
+        _received_crc = 0;
     }
 }

@@ -106,10 +106,10 @@ int main(void) {
     while (true) {
         mtbbus_update();
 
-        gpio_pin_write(pin_led_green, true);
-        LL_mDelay(500);
-        gpio_pin_write(pin_led_green, false);
-        LL_mDelay(500);
+        //gpio_pin_write(pin_led_green, true);
+        //LL_mDelay(500);
+        //gpio_pin_write(pin_led_green, false);
+        //LL_mDelay(500);
     }
 }
 
