@@ -1,13 +1,13 @@
 #include <stdbool.h>
 #include <string.h>
-#include "stm32f1xx_ll_rcc.h"
-#include "stm32f1xx_ll_system.h"
-#include "stm32f1xx_ll_utils.h"
-#include "stm32f1xx_ll_bus.h"
-#include "stm32f1xx_ll_gpio.h"
+#include <stm32f1xx_ll_rcc.h>
+#include <stm32f1xx_ll_system.h>
+#include <stm32f1xx_ll_utils.h>
+#include <stm32f1xx_ll_bus.h>
+#include <stm32f1xx_ll_gpio.h>
 
 #include "dwt_delay.h"
-#include "assert.h"
+#include "stm32_assert.h"
 #include "main.h"
 #include "gpio.h"
 #include "mtbbus.h"
@@ -15,7 +15,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-TIM_HandleTypeDef htim3; // general-purpose @ 500 us
+//TIM_HandleTypeDef htim3; // general-purpose @ 500 us
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -66,10 +66,10 @@ int main(void) {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
     /* System interrupt init */
-    NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+    //NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
     /* SysTick_IRQn interrupt configuration */
-    NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+    //NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
 
     /* NOJTAG: JTAG-DP Disabled and SW-DP Enabled */
     LL_GPIO_AF_Remap_SWJ_NOJTAG();

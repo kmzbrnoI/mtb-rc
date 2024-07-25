@@ -1,6 +1,3 @@
 [submodule "fw/lib/dwt_delay"]
 	path = fw/lib/dwt_delay
 	url = git@github.com:keatis/dwt_delay.git
-[submodule "fw/bootloader/lib/dwt_delay"]
-	path = fw/bootloader/lib/dwt_delay
-	url = git@github.com:keatis/dwt_delay.git

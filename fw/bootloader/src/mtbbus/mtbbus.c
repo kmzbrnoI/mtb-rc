@@ -7,6 +7,10 @@
  */
 
 #include <string.h>
+#include <stm32f1xx_ll_usart.h>
+#include <stm32f1xx_ll_gpio.h>
+#include <stm32f1xx_ll_bus.h>
+#include "stm32_assert.h"
 #include "mtbbus.h"
 #include "gpio.h"
 #include "crc16modbus.h"
@@ -37,8 +41,6 @@ volatile MtbBusSpeed mtbbus_speed;
 void (*mtbbus_on_receive)(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len) = NULL;
 void (*mtbbus_on_sent)() = NULL;
 
-volatile MtbBusDiag mtbbus_diag;
-
 /* Local protototypes --------------------------------------------------------*/
 
 static inline void _mtbbus_send_buf();
@@ -46,61 +48,57 @@ static inline void _mtbbus_received_ninth(uint8_t data);
 static inline void _mtbbus_received_non_ninth(uint8_t data);
 static uint32_t _mtbbus_speed(MtbBusSpeed speed);
 
-void _uart_tx_complete(UART_HandleTypeDef *huart);
-void _uart_rx_complete(UART_HandleTypeDef *huart);
+//void _uart_tx_complete(UART_HandleTypeDef *huart);
+//void _uart_rx_complete(UART_HandleTypeDef *huart);
 
 /* Implementation ------------------------------------------------------------*/
 
 void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
-    //__HAL_RCC_USART3_CLK_ENABLE();
-    //__HAL_RCC_DMA1_CLK_ENABLE();
-
     mtbbus_addr = addr;
     mtbbus_speed = speed;
 
-    memset((void*)&mtbbus_diag, 0, sizeof(mtbbus_diag));
+    LL_USART_InitTypeDef USART_InitStruct = {0};
 
-    // USART3
-    /*huart3.Instance = USART3;
-    huart3.Init.BaudRate = _mtbbus_speed(speed);
-    huart3.Init.WordLength = UART_WORDLENGTH_9B;
-    huart3.Init.StopBits = UART_STOPBITS_1;
-    huart3.Init.Parity = UART_PARITY_NONE;
-    huart3.Init.Mode = UART_MODE_TX_RX;
-    huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-    assert_param(HAL_UART_Init(&huart3) == HAL_OK);*/
+    /* Peripheral clock enable */
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
 
-    // USART3 interrupt tnit
-    //HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-    //HAL_NVIC_EnableIRQ(USART3_IRQn);
+    /* USART3_RX Init */
+    /*LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_3, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PRIORITY_HIGH);
+    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MODE_NORMAL);
+    LL_DMA_SetPeriphIncMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PERIPH_NOINCREMENT);
+    LL_DMA_SetMemoryIncMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MEMORY_INCREMENT);
+    LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PDATAALIGN_BYTE);
+    LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MDATAALIGN_BYTE);*/
 
-    // TX DMA (started ad-hoc each time)
-    /*hdma1ch2.Instance = DMA1_Channel2;
-    hdma1ch2.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma1ch2.Init.Mode = DMA_NORMAL;
-    hdma1ch2.Init.MemInc = DMA_MINC_ENABLE;
-    hdma1ch2.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma1ch2.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-    hdma1ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma1ch2.Init.Priority = DMA_PRIORITY_MEDIUM;
-    assert_param(HAL_DMA_Init(&hdma1ch2) == HAL_OK);*/
+    /* USART3_TX Init */
+    /*LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_2, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PRIORITY_HIGH);
+    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MODE_NORMAL);
+    LL_DMA_SetPeriphIncMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PERIPH_NOINCREMENT);
+    LL_DMA_SetMemoryIncMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MEMORY_INCREMENT);
+    LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PDATAALIGN_BYTE);
+    LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MDATAALIGN_BYTE);*/
 
-    // TX DMA interrupt init
-    /*HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
-    __HAL_LINKDMA(&huart3, hdmatx, hdma1ch2);*/
+    /* USART3 interrupt Init */
+    //NVIC_SetPriority(USART3_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+    //NVIC_EnableIRQ(USART3_IRQn);
 
-    /*gpio_pin_init(pin_mtbbus_tx, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
-    gpio_pin_init(pin_mtbbus_rx, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
-    gpio_pin_init(pin_mtbbus_te, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH, false);
-    gpio_uart_in();*/
+    USART_InitStruct.BaudRate = _mtbbus_speed(speed);
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+    USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+    USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+    USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
+    USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+    USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+    assert_param(LL_USART_Init(USART3, &USART_InitStruct) == SUCCESS);
+    LL_USART_ConfigAsyncMode(USART3);
+    LL_USART_Enable(USART3);
 
-    //assert_param(HAL_UART_RegisterCallback(&huart3, HAL_UART_TX_COMPLETE_CB_ID, _uart_tx_complete) == HAL_OK);
-    //assert_param(HAL_UART_RegisterCallback(&huart3, HAL_UART_RX_COMPLETE_CB_ID, _uart_rx_complete) == HAL_OK);
-
-    // Start first reading
-    //assert_param(HAL_UART_Receive_IT(&huart3, (uint8_t*)&mtbbus_input_byte, 1) == HAL_OK);
+    gpio_pin_init(pin_mtbbus_tx, LL_GPIO_MODE_ALTERNATE, 0, LL_GPIO_SPEED_FREQ_HIGH, LL_GPIO_OUTPUT_PUSHPULL);
+    gpio_pin_init(pin_mtbbus_rx, LL_GPIO_MODE_FLOATING, 0, LL_GPIO_SPEED_FREQ_HIGH, 0);
+    gpio_pin_init(pin_mtbbus_te, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_HIGH, 0);
+    gpio_uart_in();
 
     initialized = true;
 }
@@ -219,10 +217,10 @@ static inline void _mtbbus_send_buf() {
     gpio_uart_out();
     //HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&huart3, (uint8_t*)_mtbbus_ui16_output_buf, mtbbus_output_buf_size);
     //assert_param(result == HAL_OK);
-    mtbbus_diag.sent++;
+    //mtbbus_diag.sent++;
 }
 
-void _uart_tx_complete(UART_HandleTypeDef *huart) {
+void _uart_tx_complete() {
     gpio_uart_in();
     sending = false;
     sent = true;
@@ -234,7 +232,7 @@ bool mtbbus_can_fill_output_buf() {
 
 /* Receiving -----------------------------------------------------------------*/
 
-void _uart_rx_complete(UART_HandleTypeDef *huart) {
+void _uart_rx_complete() {
     bool ninth = (mtbbus_input_byte >> 8) & 1;
     uint8_t data = mtbbus_input_byte & 0xFF;
 
@@ -276,9 +274,9 @@ static inline void _mtbbus_received_non_ninth(uint8_t data) {
         uint16_t msg_crc = (mtbbus_input_buf[mtbbus_input_buf_size-1] << 8) | (mtbbus_input_buf[mtbbus_input_buf_size-2]);
         if (received_crc == msg_crc) {
             received = true;
-            mtbbus_diag.received++;
+            //mtbbus_diag.received++;
         } else {
-            mtbbus_diag.bad_crc++;
+            //mtbbus_diag.bad_crc++;
         }
 
         receiving = false;

@@ -3,7 +3,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include "stm32f1xx_hal.h"
+#include <stm32f1xx_ll_gpio.h>
 
 #define MTBBUS_ADDR_INPUTS 8
 

@@ -1,6 +1,6 @@
 #include "gpio.h"
-#include "stm32f1xx_ll_gpio.h"
-#include "stm32f1xx_ll_bus.h"
+#include "stm32_assert.h"
+#include <stm32f1xx_ll_bus.h>
 
 const PinDef pin_led_red = {GPIOB, LL_GPIO_PIN_12};
 const PinDef pin_led_green = {GPIOB, LL_GPIO_PIN_13};
@@ -43,7 +43,7 @@ void gpio_init(void) {
     gpio_pin_init(pin_led_green, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_LOW, LL_GPIO_OUTPUT_PUSHPULL);
     gpio_pin_init(pin_led_blue, LL_GPIO_MODE_OUTPUT, 0, LL_GPIO_SPEED_FREQ_LOW, LL_GPIO_OUTPUT_PUSHPULL);
 
-    for (size_t i = 0; i < MTBBUS_ADDR_INPUTS; i++)
+    for (unsigned i = 0; i < MTBBUS_ADDR_INPUTS; i++)
         gpio_pin_init(pins_addr[i], LL_GPIO_MODE_INPUT, LL_GPIO_PULL_UP, LL_GPIO_SPEED_FREQ_LOW, 0);
 
     gpio_pin_init(pin_btn, LL_GPIO_MODE_INPUT, LL_GPIO_PULL_UP, LL_GPIO_SPEED_FREQ_LOW, 0);
@@ -88,7 +88,7 @@ void gpio_pin_toggle(PinDef pin) {
 
 uint8_t gpio_mtbbus_addr(void) {
     uint8_t result = 0;
-    for (size_t i = 0; i < MTBBUS_ADDR_INPUTS; i++)
+    for (unsigned i = 0; i < MTBBUS_ADDR_INPUTS; i++)
         if (!gpio_pin_read(pins_addr[i]))
             result |= (1 << i);
     return result;
