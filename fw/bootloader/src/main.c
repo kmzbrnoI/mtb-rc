@@ -5,6 +5,7 @@
 #include <stm32f1xx_ll_utils.h>
 #include <stm32f1xx_ll_bus.h>
 #include <stm32f1xx_ll_gpio.h>
+#include <stm32f1xx_ll_tim.h>
 
 #include "dwt_delay.h"
 #include "stm32_assert.h"
@@ -106,10 +107,13 @@ int main(void) {
     while (true) {
         mtbbus_update();
 
-        //gpio_pin_write(pin_led_green, true);
-        //LL_mDelay(500);
-        //gpio_pin_write(pin_led_green, false);
-        //LL_mDelay(500);
+        if (LL_TIM_IsActiveFlag_CC1(TIM3)) {
+            LL_TIM_IsActiveFlag_CC1(TIM3);
+
+            static bool state = false;
+            gpio_pin_write(pin_led_green, state);
+            state = !state;
+        }
     }
 }
 
@@ -140,22 +144,19 @@ void init_clock(void) {
 }
 
 void init_tim3(void) {
-    // General-purpose TIM3 @ 500 us
-    /*__HAL_RCC_TIM3_CLK_ENABLE();
+    // General-purpose TIM3 @ 10 ms
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
 
-    htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 100;
-    htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 240;
-    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    assert_param(HAL_TIM_Base_Init(&htim3) == HAL_OK);*/
-
-    /* TIM3 interrupt Init */
-    /*HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM3_IRQn);
-
-    HAL_TIM_Base_Start_IT(&htim3);*/
+    LL_TIM_InitTypeDef TIM_InitStruct = {0};
+    TIM_InitStruct.Prescaler = 48;
+    TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+    TIM_InitStruct.Autoreload = 10000;
+    TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+    LL_TIM_Init(TIM3, &TIM_InitStruct);
+    LL_TIM_DisableARRPreload(TIM3);
+    LL_TIM_SetClockSource(TIM3, LL_TIM_CLOCKSOURCE_INTERNAL);
+    LL_TIM_SetTriggerOutput(TIM3, LL_TIM_TRGO_RESET);
+    LL_TIM_DisableMasterSlaveMode(TIM3);
 }
 
 void _mtbbus_init(void) {
