@@ -16,13 +16,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-//TIM_HandleTypeDef htim3; // general-purpose @ 500 us
-
 /* Private function prototypes -----------------------------------------------*/
 
 static void init_clock(void);
 static void init_tim3(void);
-static void timer_10ms(void);
 static void _mtbbus_init(void);
 
 void mtbbus_received(bool broadcast, uint8_t command_code, uint8_t *data, uint8_t data_len); // intentionally not static
@@ -30,6 +27,8 @@ static void mtbbus_send_ack(void);
 static void mtbbus_send_error(uint8_t code);
 
 static void check_and_boot(void);
+static void tim3(void);
+static void update_led(void);
 
 /* Defines -------------------------------------------------------------------*/
 
@@ -46,6 +45,8 @@ static void check_and_boot(void);
 
 #define CONFIG_BOOT_FWUPGD 0x01
 #define CONFIG_BOOT_NORMAL 0x00
+
+#define MAIN_LED_PERIOD 50 // [10ms]
 
 /* Global variables ----------------------------------------------------------*/
 
@@ -98,8 +99,8 @@ int main(void) {
     eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MAJOR, CONFIG_FW_MAJOR);
     eeprom_update_byte(EEPROM_ADDR_BOOTLOADER_VER_MINOR, CONFIG_FW_MINOR);*/
 
-    if (/*(boot != CONFIG_BOOT_FWUPGD) && */(!gpio_pin_read(pin_btn)))
-        check_and_boot();
+    //if ((boot != CONFIG_BOOT_FWUPGD) && (!gpio_pin_read(pin_btn)))
+    //    check_and_boot();
 
     // Not booting → start MTBbus
     _mtbbus_init();
@@ -108,11 +109,8 @@ int main(void) {
         mtbbus_update();
 
         if (LL_TIM_IsActiveFlag_CC1(TIM3)) {
-            LL_TIM_IsActiveFlag_CC1(TIM3);
-
-            static bool state = false;
-            gpio_pin_write(pin_led_green, state);
-            state = !state;
+            LL_TIM_ClearFlag_CC1(TIM3);
+            tim3();
         }
     }
 }
@@ -157,6 +155,7 @@ void init_tim3(void) {
     LL_TIM_SetClockSource(TIM3, LL_TIM_CLOCKSOURCE_INTERNAL);
     LL_TIM_SetTriggerOutput(TIM3, LL_TIM_TRGO_RESET);
     LL_TIM_DisableMasterSlaveMode(TIM3);
+    LL_TIM_EnableCounter(TIM3);
 }
 
 void _mtbbus_init(void) {
@@ -238,9 +237,20 @@ void assert_failed(uint8_t *file, uint32_t line) {
 
 /* "Application" code --------------------------------------------------------*/
 
-// General-purpose TIM3 @ 500 us
-void TIM3_IRQHandler(void) {
-    //HAL_TIM_IRQHandler(&htim3);
+// General-purpose TIM3 @ 10 ms
+void tim3(void) {
+    update_led();
+}
+
+void update_led(void) {
+    static uint32_t counter = 0;
+    static bool green_state = false;
+    counter++;
+    if (counter >= MAIN_LED_PERIOD) {
+        gpio_pin_write(pin_led_green, green_state);
+        green_state = !green_state;
+        counter = 0;
+    }
 }
 
 /* MTBbus --------------------------------------------------------------------*/
@@ -338,9 +348,7 @@ void mtbbus_send_error(uint8_t code) {
 
 void check_and_boot(void) {
     while (true) {
-        gpio_pin_write(pin_led_blue, true);
-        LL_mDelay(500);
-        gpio_pin_write(pin_led_blue, false);
+        gpio_pin_toggle(pin_led_blue);
         LL_mDelay(500);
     }
 }
