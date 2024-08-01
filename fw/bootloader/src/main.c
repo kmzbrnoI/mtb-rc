@@ -77,6 +77,7 @@ int main(void) {
     LL_GPIO_AF_Remap_SWJ_NOJTAG();
 
     init_clock();
+    DWT_Init();
 
     /* Initialize all configured peripherals */
     gpio_init();
