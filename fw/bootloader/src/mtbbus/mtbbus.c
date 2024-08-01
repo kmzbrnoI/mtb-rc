@@ -46,8 +46,9 @@ static inline void _mtbbus_received_ninth(uint8_t data);
 static inline void _mtbbus_received_non_ninth(uint8_t data);
 static uint32_t _mtbbus_speed(MtbBusSpeed speed);
 
-void _mtbbus_tx_complete(void);
-void _mtbbus_rx_complete(uint8_t data, bool ninth);
+static void _mtbbus_tx_complete(void); // last byte sent, transmission complete
+static void _mtbbus_send_next_byte(void);
+static void _mtbbus_rx_complete(uint8_t data, bool ninth); // byte received
 static inline bool _sending(void);
 
 /* Implementation ------------------------------------------------------------*/
@@ -120,13 +121,20 @@ void mtbbus_set_speed(MtbBusSpeed speed) {
 }
 
 void mtbbus_update(void) {
-    if (LL_USART_IsActiveFlag_RXNE(USART3)) { // RX not-empty
-        LL_USART_ClearFlag_RXNE(USART3);
-        uint16_t received = LL_USART_ReceiveData9(USART3);
+    if (LL_USART_IsActiveFlag_RXNE(MTBBUS_USART)) { // RX non-empty
+        // no need to clear flag manually, it is cleared by reading USART_DR register
+        uint16_t received = LL_USART_ReceiveData9(MTBBUS_USART);
         _mtbbus_rx_complete(received & 0xFF, received >> 8);
     }
-    if (LL_USART_IsActiveFlag_TXE(USART3)) { // TX complete
-        LL_USART_ClearFlag_RXNE(USART3);
+
+    // Transmit data register empty (not neccessarily TX complete)
+    if ((_sending()) && (_sent_i < mtbbus_output_buf_size-1) && (LL_USART_IsActiveFlag_TXE(MTBBUS_USART))) {
+        gpio_pin_toggle(pin_debug_1);
+        _mtbbus_send_next_byte();
+    }
+    if ((_sending()) && (_sent_i == mtbbus_output_buf_size-1) && (LL_USART_IsActiveFlag_TC(MTBBUS_USART))) { // TX complete
+        LL_USART_ClearFlag_TC(MTBBUS_USART);
+        gpio_pin_toggle(pin_debug_2);
         _mtbbus_tx_complete();
     }
 }
@@ -184,25 +192,23 @@ int mtbbus_send_buf_autolen(void) {
 static inline void _mtbbus_send_buf(void) {
     _sent_i = 0;
     gpio_uart_out();
-    LL_USART_TransmitData9(USART3, (((uint16_t)1)<<8) | mtbbus_output_buf[0]);
+    LL_USART_TransmitData9(MTBBUS_USART, mtbbus_output_buf[0]);
 }
 
 void _mtbbus_tx_complete(void) {
-    _sent_i++;
-
-    if (_sent_i < mtbbus_output_buf_size) {
-        // Transfer incomplete
-        LL_USART_TransmitData9(USART3, mtbbus_output_buf[_sent_i]);
-    } else {
-        // Transfer complete
-        gpio_uart_in();
-        _sent_i = -1;
-        if (mtbbus_on_sent != NULL) {
-            void (*tmp)() = mtbbus_on_sent;
-            mtbbus_on_sent = NULL;
-            tmp();
-        }
+    // Transfer complete
+    gpio_uart_in();
+    _sent_i = -1;
+    if (mtbbus_on_sent != NULL) {
+        void (*tmp)() = mtbbus_on_sent;
+        mtbbus_on_sent = NULL;
+        tmp();
     }
+}
+
+void _mtbbus_send_next_byte(void) {
+    _sent_i++;
+    LL_USART_TransmitData9(MTBBUS_USART, mtbbus_output_buf[_sent_i]);
 }
 
 bool mtbbus_can_fill_output_buf(void) {
@@ -216,6 +222,19 @@ bool _sending(void) {
 /* Receiving -----------------------------------------------------------------*/
 
 void _mtbbus_rx_complete(uint8_t data, bool ninth) {
+    bool ok = true;
+    if (LL_USART_IsActiveFlag_FE(MTBBUS_USART)) { // framing error
+        LL_USART_ClearFlag_FE(MTBBUS_USART);
+        ok = false;
+    }
+    if (LL_USART_IsActiveFlag_ORE(MTBBUS_USART)) { // overrun error
+        LL_USART_ClearFlag_ORE(MTBBUS_USART);
+        ok = false;
+    }
+
+    if (!ok)
+        return;
+
     if (ninth)
         _mtbbus_received_ninth(data);
     else
@@ -226,7 +245,7 @@ static inline void _mtbbus_received_ninth(uint8_t data) {
     _received_addr = data;
 
     if ((_received_addr == mtbbus_addr) || (_received_addr == 0)) {
-        _receiving = false;
+        _receiving = true;
         _mtbbus_input_buf_size = 0;
         _received_crc = crc16modbus_byte(0, _received_addr);
     }
