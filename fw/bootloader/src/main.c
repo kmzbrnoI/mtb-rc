@@ -117,7 +117,7 @@ int main(void) {
 }
 
 void init_clock(void) {
-    // Configura flash latency
+    // Configure flash latency
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
     while (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1);
 
@@ -128,7 +128,7 @@ void init_clock(void) {
     // Configure PLL
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE_DIV_1, LL_RCC_PLL_MUL_4);
     LL_RCC_PLL_Enable();
-    while (LL_RCC_PLL_IsReady() != 1);
+    while (!LL_RCC_PLL_IsReady());
 
     LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
     LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
@@ -163,6 +163,7 @@ void _mtbbus_init(void) {
     uint8_t config_mtbbus_speed = ee_read_uint16(EEPROM_ADDR_MTBBUS_SPEED);
     if (config_mtbbus_speed > MTBBUS_SPEED_MAX)
         config_mtbbus_speed = MTBBUS_SPEED_38400;
+    config_mtbbus_speed = MTBBUS_SPEED_115200; // DEBUG
 
     uint8_t _mtbbus_addr = gpio_mtbbus_addr();
     error_flags.bits.addr_zero = (_mtbbus_addr == 0);
