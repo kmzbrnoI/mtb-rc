@@ -15,6 +15,11 @@
 #include "gpio.h"
 #include "crc16modbus.h"
 
+/* Local defines -------------------------------------------------------------*/
+
+#define MTBBUS_USART USART3
+#define MTBBUS_USART_CLOCK LL_APB1_GRP1_PERIPH_USART3
+
 /* Local variables -----------------------------------------------------------*/
 
 bool _initialized = false;
@@ -54,7 +59,7 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     LL_USART_InitTypeDef USART_InitStruct = {0};
 
     /* Peripheral clock enable */
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
+    LL_APB1_GRP1_EnableClock(MTBBUS_USART_CLOCK);
 
     /* USART3_RX Init */
     /*LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_3, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
@@ -85,9 +90,9 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
     USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
     USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
     USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
-    assert_param(LL_USART_Init(USART3, &USART_InitStruct) == SUCCESS);
-    LL_USART_ConfigAsyncMode(USART3);
-    LL_USART_Enable(USART3);
+    assert_param(LL_USART_Init(MTBBUS_USART, &USART_InitStruct) == SUCCESS);
+    LL_USART_ConfigAsyncMode(MTBBUS_USART);
+    LL_USART_Enable(MTBBUS_USART);
 
     gpio_pin_init(pin_mtbbus_tx, LL_GPIO_MODE_ALTERNATE, 0, LL_GPIO_SPEED_FREQ_HIGH, LL_GPIO_OUTPUT_PUSHPULL);
     gpio_pin_init(pin_mtbbus_rx, LL_GPIO_MODE_FLOATING, 0, LL_GPIO_SPEED_FREQ_HIGH, 0);
@@ -98,13 +103,13 @@ void mtbbus_init(uint8_t addr, MtbBusSpeed speed) {
 }
 
 void mtbbus_deinit(void) {
-    LL_USART_Disable(USART3);
+    LL_USART_Disable(MTBBUS_USART);
 
     _initialized = false;
     _sent_i = -1;
     _receiving = false;
 
-    LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART3);
+    LL_APB1_GRP1_DisableClock(MTBBUS_USART_CLOCK);
 
     gpio_uart_in();
 }
