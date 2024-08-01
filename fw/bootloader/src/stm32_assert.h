@@ -8,11 +8,6 @@
 // on HAL configuration.
 
 /* ########################## Assert Selection ############################## */
-/**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the
-  *        HAL drivers code
-  */
-#define USE_FULL_ASSERT    1U
 
 /**
   * @brief  The assert_param macro is used for function's parameters check.
@@ -22,7 +17,14 @@
   *         If expr is true, it returns no value.
   * @retval None
   */
-#define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
-#define fail() assert_failed((uint8_t *)__FILE__, __LINE__)
 
+#ifdef USE_FULL_ASSERT
+
+# define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 void assert_failed(uint8_t* file, uint32_t line);
+
+#else
+
+# define assert_param(expr)
+
+#endif
