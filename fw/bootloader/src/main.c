@@ -163,7 +163,6 @@ void _mtbbus_init(void) {
     uint8_t config_mtbbus_speed = ee_read_uint16(EEPROM_ADDR_MTBBUS_SPEED);
     if (config_mtbbus_speed > MTBBUS_SPEED_MAX)
         config_mtbbus_speed = MTBBUS_SPEED_38400;
-    config_mtbbus_speed = MTBBUS_SPEED_115200; // DEBUG
 
     uint8_t _mtbbus_addr = gpio_mtbbus_addr();
     error_flags.bits.addr_zero = (_mtbbus_addr == 0);

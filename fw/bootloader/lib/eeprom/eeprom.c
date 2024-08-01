@@ -1,4 +1,5 @@
 #include "eeprom.h"
+#include "flash.h"
 #include "stm32_assert.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,11 +20,11 @@ void ee_format(void) {
 }
 
 void ee_read(uint32_t virtAddr, uint32_t len, uint8_t* data) {
-    //assert_param(virtAddr < FLASH_PAGE_SIZE);
+    assert_param(virtAddr < FLASH_PAGE_SIZE);
     assert_param(data != NULL);
 
-    //for (uint32_t i = 0; i < len; i++, data++)
-    //    *data = (*(__IO uint8_t*) (virtAddr+i + EE_START));
+    for (uint32_t i = 0; i < len; i++, data++)
+        *data = (*(__IO uint8_t*) (virtAddr+i + EE_START));
 }
 
 void ee_write(uint32_t virtAddr, uint32_t len, uint8_t* data) {
