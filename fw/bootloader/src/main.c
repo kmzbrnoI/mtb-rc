@@ -172,47 +172,6 @@ void _mtbbus_init(void) {
 
 /* System stuff --------------------------------------------------------------*/
 
-// Non-maskable interrupt
-void NMI_Handler(void) {
-    fail();
-}
-
-void HardFault_Handler(void) {
-    fail();
-}
-
-void MemManage_Handler(void) {
-    fail();
-}
-
-void BusFault_Handler(void) {
-    fail();
-}
-
-void UsageFault_Handler(void) {
-    fail();
-}
-
-// System service call via SWI instruction
-void SVC_Handler(void) {
-    fail();
-}
-
-// Debug monitor
-void DebugMon_Handler(void) {
-    fail();
-}
-
-// Pendable request for system service
-void PendSV_Handler(void) {
-    fail();
-}
-
-// System tick timer
-void SysTick_Handler(void) {
-    fail();
-}
-
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
