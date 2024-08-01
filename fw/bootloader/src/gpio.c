@@ -69,7 +69,7 @@ bool gpio_pin_read(PinDef pin) {
     // LL_GPIO_PIN8-15 is not (1 << GPIO), see stm32f1xx_ll_gpio.h
     // -> transform to (1 << GPIO)
     uint32_t _pin = pin.pin;
-    if (_pin> 0xFFFF)
+    if (_pin > 0xFFFF)
         _pin <<= 8;
     return (LL_GPIO_ReadInputPort(pin.port) & _pin) > 0;
 }
@@ -87,9 +87,5 @@ void gpio_pin_toggle(PinDef pin) {
 }
 
 uint8_t gpio_mtbbus_addr(void) {
-    uint8_t result = 0;
-    for (unsigned i = 0; i < MTBBUS_ADDR_INPUTS; i++)
-        if (!gpio_pin_read(pins_addr[i]))
-            result |= (1 << i);
-    return result;
+    return (~LL_GPIO_ReadInputPort(GPIOB)) & 0xFF;
 }
